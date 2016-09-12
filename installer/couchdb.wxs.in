@@ -59,21 +59,11 @@
 					Name="Apache CouchDB Fauxton" 
                     Target="http://localhost:5984/_utils/index.html" />
 					
-				<Shortcut Id="ApplicationStartMenuShortcut"
-					Name="Start Apache CouchDB Service"
-					Description="Start the Apache CouchDB service"
+				<Shortcut Id="ApplicationServiceMenuShortcut"
+                    Name="Start or Stop Apache CouchDB Service"
+					Description="Start or stop the Apache CouchDB service"
                     Icon="couchdb.ico"
-                    Target="[APPLICATIONFOLDER]bin\nssm.exe"
-                    Arguments="start &quot;Apache CouchDB&quot;"
-                    WorkingDirectory="APPLICATIONFOLDER"/>
-					
-				<Shortcut Id="ApplicationStopMenuShortcut"
-					Name="Stop Apache CouchDB Service"
-					Description="Stop the Apache CouchDB service"
-                    Icon="couchdb.ico"
-                    Target="[APPLICATIONFOLDER]bin\nssm.exe"
-                    Arguments="stop &quot;Apache CouchDB&quot;"
-                    WorkingDirectory="APPLICATIONFOLDER"/>
+                    Target="[System64Folder]\services.msc" />
 					
 				<Shortcut Id="UninstallShortcut"
 					Name="Uninstall Apache CouchDB"
