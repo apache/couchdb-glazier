@@ -27,11 +27,10 @@
 			EmbedCab="yes" />
 
 		<!--Directory structure-->
-        <SetDirectory Id="APPLICATIONFOLDER"
-            Value="[WindowsVolume]CouchDB" />
+        <Property Id="ApplicationFolderName" Value="C:\CouchDB" />
 		<Directory Id="TARGETDIR"
 			Name="SourceDir">
-			<Directory Id="APPLICATIONFOLDER" Name="Apache CouchDB" />
+			<Directory Id="APPLICATIONFOLDER" Name="CouchDB" />
 			<Directory Id="ProgramMenuFolder">
 				<Directory Id="OurShortcutsDir" Name="Apache CouchDB" />
 			</Directory>
