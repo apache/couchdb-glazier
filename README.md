@@ -100,8 +100,7 @@ Open a `Couch SDK Prompt`:
 
 	cd c:\relax
     git config --global core.autocrlf input
-	git clone https://github.com/dch/glazier.git
-    :: or git clone git://github.com/dch/glazier.git if you are a developer
+	git clone https://git-wip-us.apache.org/repos/asf/couchdb-glazier.git
 	mklink /j c:\relax\bin c:\relax\glazier\bin
 	path=c:\relax\bin;%PATH%;
 	aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=glazier/downloads.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt
@@ -179,7 +178,7 @@ Start by launching a fresh `SDK prompt`.
 Start a new `SDK prompt`, then run `c:\relax\bin\shell.cmd`.
 Select `Erlang 17.5` and `w for a Windows prompt`.
 
-    cd \relax && git clone http://git-wip-us.apache.org/repos/asf/couchdb.git
+    cd \relax && git clone https://gitbox.apache.org/repos/asf/couchdb.git
     cd couchdb
     # optional, use suitable tag here
     # git checkout --track origin/2.0.x
