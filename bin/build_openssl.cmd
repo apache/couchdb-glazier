@@ -26,7 +26,7 @@ pushd %relax%\%openssl_ver%
 perl Configure VC-WIN64A --prefix=%ssl_path%
 call ms\do_win64a
 nmake -f ms\nt.mak clean
-nmake -f ms\nt.mak
+nmake -f ms\nt.mak all
 nmake -f ms\nt.mak test
 nmake -f ms\nt.mak install
 

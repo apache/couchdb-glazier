@@ -5,18 +5,18 @@
 http://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe
 ################################################################################
 ### OpenSSL
-http://openssl.org/source/openssl-1.0.2e.tar.gz
+https://www.openssl.org/source/openssl-1.0.2l.tar.gz
 ################################################################################
 ### libcurl
-https://curl.haxx.se/download/curl-7.49.1.zip
+https://curl.haxx.se/download/curl-7.49.1.zip 
 ################################################################################
 ### Erlang
 http://www.erlang.org/download/otp_src_17.5.tar.gz
-http://www.erlang.org/download/otp_src_18.0.tar.gz
-http://www.erlang.org/download/otp_src_18.1.tar.gz
+http://www.erlang.org/download/otp_src_18.3.tar.gz
+http://www.erlang.org/download/otp_src_19.3.tar.gz
 ################################################################################
 ### ICU4C
-http://download.icu-project.org/files/icu4c/55.1/icu4c-55_1-src.zip
+http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.zip
 ################################################################################
 ### spidermonkey    js185-1.0.0.tar.gz
 http://ftp.mozilla.org/pub/mozilla.org/js/js185-1.0.0.tar.gz

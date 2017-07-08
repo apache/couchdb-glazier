@@ -41,7 +41,7 @@ xcopy %RELAX%\js-1.8.5\js\src\dist\bin\*.dll %COUCHDB%\bin /Y >NUL 2>&1
 copy %RELAX%\curl\lib\libcurl.dll %COUCHDB%\bin /Y >NUL 2>&1
 
 :: add nssm so we can create/delete the Windows service
-copy C:\ProgramData\chocolatey\lib\NSSM\Tools\nssm-2.24\win64\nssm.exe %COUCHDB%\bin /Y >NUL 2>&1
+copy c:\ProgramData\Chocolatey\lib\nssm\tools\nssm-2.24-101-g897c7ad\win64\nssm.exe %COUCHDB%\bin /Y >NUL 2>&1
 
 :: update version number
 :: commented out because WiX insists on a #.#.#.# number format and there's

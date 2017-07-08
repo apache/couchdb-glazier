@@ -44,16 +44,16 @@ goto %OTP_REL%
 :: choice.exe exists on all windows platforms since MSDOS but not on XP
 :select
 echo Select an Erlang:
-echo       7 for Erlang 17.5 (default)
-echo       8 for Erlang 18.0
-echo       1 for Erlang 18.1
+echo       7 for Erlang 17.5 
+echo       8 for Erlang 18.3 (default)
+echo       9 for Erlang 19.3
 set /p choice="Make your selection ===> "
 if /i "%choice%"=="0" goto win_shell
 if /i "%choice%"=="7" goto 17.5
-if /i "%choice%"=="8" goto 18.0
-if /i "%choice%"=="1" goto 18.1
+if /i "%choice%"=="8" goto 18.3
+if /i "%choice%"=="9" goto 19.3
 :: else
-goto 18.1
+goto 18.3
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :17.5
@@ -62,15 +62,15 @@ set OTP_REL=17.5
 goto shell_select
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:18.0
-set ERTS_VSN=7.0
-set OTP_REL=18.0
+:18.3
+set ERTS_VSN=7.3
+set OTP_REL=18.3
 goto shell_select
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:18.1
-set ERTS_VSN=7.1
-set OTP_REL=18.1
+:19.3
+set ERTS_VSN=8.3
+set OTP_REL=19.3
 goto shell_select
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -101,7 +101,7 @@ set ERL_TOP=%WERL_DIR%\otp_src_%OTP_REL%
 echo Type exit to stop relaxing.
 title On the couch. Type exit to stop relaxing.
 :: Need these things on the path to build/run CouchDB
-set PATH=%ERL_TOP%\release\win32\erts-%ERTS_VSN%\bin;%ERL_TOP%\bootstrap\bin;%ERL_TOP%\erts\etc\win32\cygwin_tools\vc;%ERL_TOP%\erts\etc\win32\cygwin_tools;%RELAX%\bin;%PATH%;%ICU_PATH%\bin64;%RELAX%\js-1.8.5\js\src\dist\bin;%RELAX%\curl\lib;c:\ProgramData\chocolatey\lib\python3\tools\Scripts;C:\Program Files\nodejs;C:\Program Files (x86)\WiX Toolset v3.10\bin
+set PATH=%ERL_TOP%\release\win32\erts-%ERTS_VSN%\bin;%ERL_TOP%\bootstrap\bin;%ERL_TOP%\erts\etc\win32\cygwin_tools\vc;%ERL_TOP%\erts\etc\win32\cygwin_tools;%RELAX%\bin;%PATH%;%ICU_PATH%\bin64;%RELAX%\js-1.8.5\js\src\dist\bin;%RELAX%\curl\lib;C:\Python36\Scripts;C:\Program Files\nodejs;C:\Program Files (x86)\WiX Toolset v3.11\bin;C:\tools\cygwin\bin
 cmd.exe /k
 goto eof
 
@@ -109,7 +109,7 @@ goto eof
 :ps_shell
 echo Type exit to stop relaxing.
 title On the couch. Type exit to stop relaxing.
-set PATH=%ERL_TOP%\release\win32\erts-%ERTS_VSN%\bin;%ERL_TOP%\bootstrap\bin;%ERL_TOP%\erts\etc\win32\cygwin_tools\vc;%ERL_TOP%\erts\etc\win32\cygwin_tools;c:\relax\bin;%PATH%;%ICU_PATH%\bin64;C:\Relax\js-1.8.5\js\src\dist\bin;C:\relax\curl\lib;c:\ProgramData\chocolatey\lib\python3\tools\Scripts;C:\Program Files\nodejs;C:\Program Files (x86)\WiX Toolset v3.10\bin
+set PATH=%ERL_TOP%\release\win32\erts-%ERTS_VSN%\bin;%ERL_TOP%\bootstrap\bin;%ERL_TOP%\erts\etc\win32\cygwin_tools\vc;%ERL_TOP%\erts\etc\win32\cygwin_tools;c:\relax\bin;%PATH%;%ICU_PATH%\bin64;C:\Relax\js-1.8.5\js\src\dist\bin;C:\relax\curl\lib;c:\ProgramData\chocolatey\lib\python3\tools\Scripts;C:\Program Files\nodejs;C:\Program Files (x86)\WiX Toolset v3.11\bin
 powershell
 goto eof
 
