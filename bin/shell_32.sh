@@ -27,28 +27,26 @@ echo
 
 # convenience variables
 C_DRV=/cygdrive/c
+PRG_FLS=$C_DRV/Program\ Files\ \(x86\)
 PRG_FLS64=$C_DRV/Program\ Files
-PRG_FLS32=$C_DRV/Program\ Files\ \(x86\)
 
 # MSVS 2013
-VISUAL_STUDIO_ROOT32=$PRG_FLS32/Microsoft\ Visual\ Studio\ 12.0
-MS_SDK_ROOT64=$PRG_FLS32/Windows\ Kits/8.1
-NETFX_ROOT64=$PRG_FLS32/Microsoft\ SDKs/Windows/v8.1A/bin/NETFX\ 4.5.1\ Tools/x64
+VISUAL_STUDIO_ROOT=$PRG_FLS/Microsoft\ Visual\ Studio\ 12.0
+MS_SDK_ROOT=$PRG_FLS/Windows\ Kits/8.1
+NETFX_ROOT=$PRG_FLS/Microsoft\ SDKs/Windows/v8.1A/bin/NETFX\ 4.5.1\ Tools
 # Okay, now mangle the paths and get rid of spaces by using short names
-WIN_VCROOT32=`make_winpath "$VISUAL_STUDIO_ROOT32"`
-VCROOT32=`make_upath $WIN_VCROOT32`
-WIN_SDKROOT64=`make_winpath "$MS_SDK_ROOT64"`
-SDKROOT64=`make_upath $WIN_SDKROOT64`
-WIN_NETFXROOT64=`make_winpath "$NETFX_ROOT64"`
-NETFXROOT64=`make_upath $WIN_NETFXROOT64`
-WIN_PROGRAMFILES32=`make_winpath "$PRG_FLS32"`
-PROGRAMFILES32=`make_upath $WIN_PROGRAMFILES32`
+WIN_VCROOT=`make_winpath "$VISUAL_STUDIO_ROOT"`
+VCROOT=`make_upath $WIN_VCROOT`
+WIN_SDKROOT=`make_winpath "$MS_SDK_ROOT"`
+SDKROOT=`make_upath $WIN_SDKROOT`
+WIN_NETFXROOT=`make_winpath "$NETFX_ROOT"`
+NETFXROOT=`make_upath $WIN_NETFXROOT`
+WIN_PROGRAMFILES=`make_winpath "$PRG_FLS"`
+PROGRAMFILES=`make_upath $WIN_PROGRAMFILES`
 
-WIN_PROGRAMFILES64=`make_winpath "$PRG_FLS64"`
-PROGRAMFILES64=`make_upath $WIN_PROGRAMFILES64`
 
 # nsis
-NSIS_BIN=$PRG_FLS32/NSIS
+NSIS_BIN=$PRG_FLS/NSIS
 # openssl
 OPENSSL_BIN=/cygdrive/c/relax/openssl/bin
 # skipping java
@@ -60,9 +58,8 @@ $ERL_TOP/erts/etc/win32/cygwin_tools/vc:\
 $ERL_TOP/erts/etc/win32/cygwin_tools
 
 # path to everything Visual Studio 2013
-VC_PATH=$VCROOT32/Common7/IDE:$VCROOT32/VC/BIN:$VCROOT32/Common7/Tools:\
-$VCROOT32/VC/VCPackages:$NETFXROOT64:$SDKROOT64/bin/x86:\
-$SDKROOT64/bin
+VC_PATH=$VCROOT/Common7/IDE:$VCROOT/VC/BIN:$VCROOT/Common7/Tools:\
+$VCROOT/VC/VCPackages:$NETFXROOT:$SDKROOT/bin/x86
 
 # .Net framework which we need to have clean manifests and SxS for Win7 x86
 DOTNET_PATH=/cygdrive/c/WINDOWS/Microsoft.NET/Framework:/cygdrive/c/WINDOWS/Microsoft.NET/Framework/v4.0.30319:/cygdrive/c/WINDOWS/Microsoft.NET/Framework/v3.5
@@ -72,6 +69,14 @@ GLAZIER_PATH=$PATH:/relax/bin:/relax/bits
 
 # put it all together
 PATH=$NSIS_BIN:$OPENSSL_BIN:$VC_PATH:$PATH:$DOTNET_PATH:$ERL_PATH:$GLAZIER_PATH
+
+LIBPATH="$LIBPATH:$VCROOT\\VC\\lib"
+
+LIB="$LIB:$VCROOT\\VC\\lib\\;$SDKROOT\\lib\\winv6.3\\um\\x86"
+
+INCLUDE="$INCLUDE:$VCROOT\\VC\\include\\;$SDKROOT\\include\\shared\\;\
+$SDKROOT\\include\\um;$SDKROOT\\include\\winrt\\;$SDKROOT\\include\\um\\gl"
+
 
 # Microsoft SDK libpaths are set by setup.cmd
 
