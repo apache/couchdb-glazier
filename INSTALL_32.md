@@ -44,7 +44,7 @@ pip install sphinx docutils pygments
 *Note: Do NOT install curl or help2man inside CygWin!*
 
 ## Mozilla build
-Fetch the latest Mozilla Build version from
+Fetch [Mozilla Build 2.2](https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-2.2.0.exe) from
 https://wiki.mozilla.org/MozillaBuild and install to c:\mozilla-build
 with all defaults.
 
@@ -217,7 +217,7 @@ Start by launching a fresh `CouchDB SDK prompt`, then setup the
 Mozilla build environment with the command:
 
 ```dos
-call c:\mozilla-build\start-shell-msvc2013-x64.bat
+call c:\mozilla-build\start-shell-msvc2013.bat
 ```
 
 Now, ensure the output of `which cl lc link mt rc make` matches
@@ -242,7 +242,7 @@ tar xzf bits/js185-1.0.0.tar.gz
 patch -p0 </c/relax/couchdb-glazier/bits/js185-msvc2013.patch
 cd js-1.8.5/js/src
 autoconf-2.13
-./configure --enable-static --enable-shared-js --disable-debug-symbols --disable-debug --disable-debugger-info-modules --target=x86_64-pc-mingw32 --host=x86_64-pc-mingw32
+./configure --enable-static --enable-shared-js --disable-debug-symbols --disable-debug --disable-debugger-info-modules
 make
 ```
 
@@ -261,6 +261,8 @@ make check
 Close the prompt window by entering `exit` twice.
 
 ## Building CouchDB itself
+
+Before compiling CouchDB, you need to make sure that rebar is installed on your system and accessible via your %PATH% environment.
 
 Start a new `SDK prompt`, then run `c:\relax\bin\shell.cmd`.
 Select `Erlang 18.3` and `w for a Windows prompt`.

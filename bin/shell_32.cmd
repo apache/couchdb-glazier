@@ -2,9 +2,9 @@
 title Time to Relax.
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 set CYGWIN=nontsec nodosfilewarning
-if not exist c:\temp mkdir c:\temp
-set TEMP=c:\temp
-set TMP=c:\temp
+if not exist c:\tmp mkdir c:\tmp
+set TEMP=c:\tmp
+set TMP=c:\tmp
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: following settings allow Erlang build to locate openssl correctly
@@ -17,6 +17,11 @@ if not defined CURL_PATH set CURL_PATH=%RELAX%\curl
 if not defined ZLIB_PATH set ZLIB_PATH=%RELAX%\zlib
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: haul in MSVC compiler configuration
+:: TODO remove dependency on x86 flag
+call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: LIB and INCLUDE are preset by Windows SDK and/or Visual C++ shells
 :: however VC++ uses LIB & INCLUDE and SDK uses Lib & Include. In Cygwin
 :: these are *NOT* the same but when we shell out to CL.exe and LINK.exe
@@ -25,10 +30,13 @@ if not defined ZLIB_PATH set ZLIB_PATH=%RELAX%\zlib
 :: relax for couchdb
 :: werldir for building erlang
 
-if not defined RELAX setx RELAX e:\relax > NUL:
-if not defined RELAX set RELAX=e:\relax
-if not defined WERL_DIR setx WERL_DIR c:\werl > NUL:
+if not defined RELAX set RELAX=c:\relax
 if not defined WERL_DIR set WERL_DIR=c:\werl
+setx WERL_DIR %WERL_DIR% > NUL:
+setx RELAX %RELAX% > NUL:
+
+set LIB=%RELAX%\VC\VC\lib;%RELAX%\SDK\lib;%LIB%
+SET INCLUDE=%RELAX%\VC\VC\Include;%RELAX%\SDK\Include;%RELAX%\SDK\Include\gl;%INCLUDE%
 
 set INCLUDE=%INCLUDE%;%SSL_PATH%\include\openssl;%SSL_PATH%\include;%CURL_PATH%\include\curl;%ICU_PATH%\include;
 set LIBPATH=%LIBPATH%;%SSL_PATH%\lib;%CURL_PATH%\lib;%ICU_PATH%\lib;
@@ -73,9 +81,10 @@ set ERTS_VSN=8.3
 set OTP_REL=19.3
 goto shell_select
 
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :shell_select
-for /f "usebackq" %%i in (`c:\tools\cygwin\bin\cygpath.exe %WERL_DIR%`) do @set WERL_PATH=%%i
+for /f "usebackq" %%i in (`c:\cygwin\bin\cygpath.exe %WERL_DIR%`) do @set WERL_PATH=%%i
 
 echo Select a shell:
 echo       w for Windows prompt (default)
@@ -88,30 +97,19 @@ if /i "%choice%"=="p" goto ps_shell
 :: else
 goto :win_shell
 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :unix_shell
-set ERL_TOP=%WERL_PATH%/otp_src_%OTP_REL%
 color
 title Building in %ERL_TOP% with OTP %OTP_REL% and Erlang v%ERTS_VSN%
-c:\tools\cygwin\bin\bash %relax%\bin\shell_32.sh
+for /f "usebackq" %%i in (`c:\cygwin\bin\cygpath.exe %WERL_DIR%`) do @set WERL_PATH=%%i
+set ERL_TOP=%WERL_PATH%/otp_src_%OTP_REL%
+c:\cygwin\bin\bash %relax%\bin\shell.sh
 goto eof
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :win_shell
-set ERL_TOP=%WERL_DIR%\otp_src_%OTP_REL%
-echo Type exit to stop relaxing.
-title On the couch. Type exit to stop relaxing.
-:: Need these things on the path to build/run CouchDB
-set PATH=%ERL_TOP%\release\win32\erts-%ERTS_VSN%\bin;%ERL_TOP%\bootstrap\bin;%ERL_TOP%\erts\etc\win32\cygwin_tools\vc;%ERL_TOP%\erts\etc\win32\cygwin_tools;%RELAX%\bin;%PATH%;%ICU_PATH%\bin;%RELAX%\js-1.8.5\js\src\dist\bin;%RELAX%\curl\lib;C:\Python36\Scripts;C:\Program Files\nodejs;C:\Program Files (x86)\WiX Toolset v3.11\bin;C:\tools\cygwin\bin
+echo type exit to stop relaxing.
 cmd.exe /k
-goto eof
-
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:ps_shell
-echo Type exit to stop relaxing.
-title On the couch. Type exit to stop relaxing.
-set PATH=%ERL_TOP%\release\win32\erts-%ERTS_VSN%\bin;%ERL_TOP%\bootstrap\bin;%ERL_TOP%\erts\etc\win32\cygwin_tools\vc;%ERL_TOP%\erts\etc\win32\cygwin_tools;c:\relax\bin;%PATH%;%ICU_PATH%\bin;C:\Relax\js-1.8.5\js\src\dist\bin;C:\relax\curl\lib;c:\ProgramData\chocolatey\lib\python3\tools\Scripts;C:\Program Files\nodejs;C:\Program Files (x86)\WiX Toolset v3.11\bin
-powershell
-goto eof
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :eof
