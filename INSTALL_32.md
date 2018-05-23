@@ -14,7 +14,7 @@ a consistent, repeatable build environment.
 
 # Base Requirements
 
-- 64-bit Windows 7 or 8.1. *As of CouchDB 2.0 we only support a 64-bit build of CouchDB*.
+- 64-bit Windows 7 or 8.1. *This is required for Mozilla build setup*.
   - We like 64-bit Windows 7, 8.1 or 10 Enterprise N (missing Media Player, etc.) from MSDN.
 - If prompted, reboot after installing the .NET framework.
 - [Visual Studio 2013 x86 Community Edition](https://www.visualstudio.com/vs/older-downloads/) installed on the *C: drive*. Downloading requires a free Dev Essentials subscription from Microsoft.
@@ -29,19 +29,45 @@ a consistent, repeatable build environment.
 
 # Install Pre-requisites
 
-## Clean Package Installs with Chocolatey, cyg-get and pip
+## Clean Package Installs with Chocolatey, Cygwin and pip
 
 These packages install silently, without intervention. Cut and paste them
 into an **Administrator** command prompt.
 
 ```dos
-cinst -y git 7zip.commandline StrawberryPerl nasm cyg-get wixtoolset python aria2 nodejs.install make
-cinst -y nssm --version 2.24.101-g897c7ad
-cyg-get p7zip autoconf binutils bison gcc-code gcc-g++ gdb git libtool make patchutils pkg-config readline file renameutils socat time tree util-linux wget
+cinst -y git 7zip.commandline StrawberryPerl nasm wixtoolset python aria2 nodejs.install make
+cinst -y nssm --version 2.24.101-g897c7ad --x86
 pip install sphinx docutils pygments
 ```
 
+For Cygwin, install the 32bit version.
+
+Required packages:
+
+- cyg-get
+- p7zip
+- autoconf
+- binutils
+- bison
+- gcc-code
+- gcc- g++
+- gdb
+- git
+- libtool
+- make
+- patchutils
+- pkg-config
+- readline
+- file
+- renameutils
+- socat
+- time
+- tree
+- util-linux
+- wget
+
 *Note: Do NOT install curl or help2man inside CygWin!*
+*Note: If you have problems compiling erlang, I recommend you check most of the devel packages and hope for the best!*
 
 ## Mozilla build
 Fetch [Mozilla Build 2.2](https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-2.2.0.exe) from
@@ -98,6 +124,8 @@ mklink /j c:\openssl c:\relax\openssl
 setx RELAX c:\relax
 ```
 
+*Note: The SDK version might vary base on your OS. This was done with Windows 10 Professional*
+
 Close all open command prompts. Now we're ready to go!
 
 # Building CouchDB Pre-requisites
@@ -127,7 +155,7 @@ As of 2017-07-08, this will download the source for the following versions of ou
 * SpiderMonkey 1.8.5
 
 
-## Build & Test 86-bit OpenSSL
+## Build & Test 32-bit OpenSSL
 
 In the same `CouchDB SDK Prompt`, run the following:
 
@@ -158,7 +186,7 @@ Close the window.
 ## Start a UNIX-friendly shell with MS compilers
 
 1. Start your `CouchDB SDK Prompt` as above
-2. Launch a cygwin erl-ified shell via `c:\relax\bin\shell_32.cmd`
+2. Launch a cygwin erl-ified shell via `C:\relax\bin\shell_32.cmd`
 3. Select 18.3 (unless you know what you are doing!)
 4. Select `b for bash prompt`.
 
@@ -184,13 +212,13 @@ At this point, check your paths. Run `which cl link mc lc mt nmake rc`.
 The output should match the following:
 
 ```bash
-/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN/cl
-/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN/link
-/cygdrive/c/PROGRA~2/WI3CF2~1/8.1/bin/x86/mc
-/cygdrive/c/PROGRA~2/MICROS~1/Windows/v8.1A/bin/NETFX4~1.1TO/lc
-/cygdrive/c/PROGRA~2/WI3CF2~1/8.1/bin/x86/mt
-/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN/nmake
-/cygdrive/c/PROGRA~2/WI3CF2~1/8.1/bin/x86/rc
+/cygdrive/c/relax/VC/VC/bin/cl
+/cygdrive/c/relax/VC/VC/bin/link
+/cygdrive/c/Program Files (x86)/Windows Kits/8.1/bin/x86/mc
+/cygdrive/c/relax/SDK/bin/NETFX 4.5.1 Tools/lc
+/cygdrive/c/Program Files (x86)/Windows Kits/8.1/bin/x86/mt
+/cygdrive/c/relax/VC/VC/bin/nmake
+/cygdrive/c/Program Files (x86)/Windows Kits/8.1/bin/x86/rc
 ```
 
 If it does not, stop and diagnose.
@@ -224,9 +252,9 @@ Now, ensure the output of `which cl lc link mt rc make` matches
 the following:
 
 ```dos
-/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64/cl.exe
+/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64_x86/cl.exe
 /c/Program Files (x86)/Microsoft SDKs/Windows/v8.1A/bin/NETFX 4.5.1 Tools/x64/lc.exe
-gram Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64/link.exe
+/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64_x86/link.exe
 /c/Program Files (x86)/Windows Kits/8.1/bin/x64/mt.exe
 /c/Program Files (x86)/Windows Kits/8.1/bin/x64/rc.exe
 /local/bin/make.exe
@@ -296,8 +324,8 @@ To build an installer using WiX to create a full Windows .msi, run:
 
 ```dos
     make -f Makefile.win release
-    cd \relax\glazier
-    bin\build_installer.cmd
+    cd \relax\couchdb-glazier
+    bin\build_installer_32.cmd
 ```
 
 You made it! Time to relax. :D
