@@ -14,8 +14,8 @@ if not defined SSL_PATH echo OpenSSL not built && goto eof
 :: clean up existing installs
 :: extract bundle and name
 :: stash SSL version
-::if exist %curl_path% rd /s/q %curl_path%
-::if defined curl_ver rd /s/q %curl_src%
+if exist %curl_path% rd /s/q %curl_path%
+if defined curl_ver rd /s/q %curl_src%
 7z x "%RELAX%\bits\curl-*.zip" -o%RELAX% -y
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -28,13 +28,11 @@ set INCLUDE=%INCLUDE%;%SSL_PATH%\include;%SSL_PATH%\include\openssl;
 set LIBPATH=%LIBPATH%;%SSL_PATH%\lib;
 set LIB=%LIB%;%SSL_PATH%\lib;
 pushd %curl_src%
-::cd winbuild
 nmake VC=VC12 VC12
 cd lib
 nmake /f Makefile.VC12 MACHINE=x86 cfg=release-dll
 cd ..\src
 nmake /f Makefile.VC12 MACHINE=x86 cfg=release-dll
-::nmake /f MakeFile.vc VC=12 mode=static DEBUG=no MACHINE=x86
 popd
 :: make this specific curl version available to CouchDB build script
 mklink /d %curl_path% %curl_src%
