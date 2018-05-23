@@ -11,12 +11,12 @@ dependencies within the same runtime.
 We hope Glazier simplifies using Erlang and CouchDB for you, giving
 a consistent, repeatable build environment.
 
-For 32bit build instructions, see [this documentation](README_32.md)
+For 32bit build instructions, see [this documentation](INSTALL_32.md)
 
 
 # Base Requirements
 
-- 64-bit Windows 7 or 8.1. *As of CouchDB 2.0 we only support a 64-bit build of CouchDB. Altought, 32bit instructions are available [here](README_32.md)*.
+- 64-bit Windows 7 or 8.1. *As of CouchDB 2.0 we only support a 64-bit build of CouchDB. Altought, 32bit instructions are available [here](INSTALL_32.md)*.
   - We like 64-bit Windows 7, 8.1 or 10 Enterprise N (missing Media Player, etc.) from MSDN.
 - If prompted, reboot after installing the .NET framework.
 - [Visual Studio 2013 x64 Community Edition](https://www.visualstudio.com/vs/older-downloads/) installed on the *C: drive*. Downloading requires a free Dev Essentials subscription from Microsoft.
