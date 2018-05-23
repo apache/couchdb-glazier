@@ -12,7 +12,7 @@ del /f/q "%TEMP%\openssl*.tar"
 for %%i in ("%TEMP%\openssl-*.tar") do set openssl_ver=%%~ni
 setx openssl_ver %openssl_ver%
 set SSL_PATH=%relax%\openssl
-setx SSL_PATH %ssl_path%
+setx SSL_PATH "%ssl_path%"
 
 if exist "%ssl_path%" rd /s/q "%ssl_path%"
 :: set up a softlink for openssl as Erlang seems to dumb to find it

@@ -3,7 +3,7 @@ setlocal
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: icu doesn't have a version name in the archive path
 set ICU_PATH=%RELAX%\icu
-setx ICU_PATH %icu_path%
+setx ICU_PATH "%icu_path%"
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: ensure we have a fresh source tree to build from
 if exist "%icu_path%" rd /s/q %icu_path%

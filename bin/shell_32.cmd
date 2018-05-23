@@ -103,12 +103,16 @@ color
 title Building in %ERL_TOP% with OTP %OTP_REL% and Erlang v%ERTS_VSN%
 for /f "usebackq" %%i in (`c:\cygwin\bin\cygpath.exe %WERL_DIR%`) do @set WERL_PATH=%%i
 set ERL_TOP=%WERL_PATH%/otp_src_%OTP_REL%
-c:\cygwin\bin\bash %relax%\bin\shell.sh
+c:\cygwin\bin\bash %relax%\bin\shell_32.sh
 goto eof
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :win_shell
-echo type exit to stop relaxing.
+set ERL_TOP=%WERL_DIR%\otp_src_%OTP_REL%
+echo Type exit to stop relaxing.
+title On the couch. Type exit to stop relaxing.
+:: Need these things on the path to build/run CouchDB
+set PATH=%ERL_TOP%\release\win32\erts-%ERTS_VSN%\bin;%ERL_TOP%\bootstrap\bin;%ERL_TOP%\erts\etc\win32\cygwin_tools\vc;%ERL_TOP%\erts\etc\win32\cygwin_tools;%RELAX%\bin;%PATH%;%ICU_PATH%\bin;%RELAX%\js-1.8.5\js\src\dist\bin;%RELAX%\curl\lib;C:\Program files\Python36\Scripts;C:\Program Files\nodejs;C:\Program Files (x86)\WiX Toolset v3.11\bin;C:\cygwin\bin
 cmd.exe /k
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

@@ -4,9 +4,9 @@ path=%path%;%relax%\openssl\bin;
 for %%i in ("%relax%\bits\curl-*.zip") do set curl_ver=%%~ni
 setx CURL_VER %curl_ver%
 set CURL_VER=%curl_ver%
-setx CURL_SRC %curl_src%
+setx CURL_SRC "%curl_src%"
 set CURL_SRC=%RELAX%\%curl_ver%
-setx CURL_PATH %curl_path%
+setx CURL_PATH "%curl_path%"
 set CURL_PATH=%relax%\curl
 
 if not defined SSL_PATH echo OpenSSL not built && goto eof
@@ -14,8 +14,8 @@ if not defined SSL_PATH echo OpenSSL not built && goto eof
 :: clean up existing installs
 :: extract bundle and name
 :: stash SSL version
-if exist %curl_path% rd /s/q %curl_path%
-if defined curl_ver rd /s/q %curl_src%
+::if exist %curl_path% rd /s/q %curl_path%
+::if defined curl_ver rd /s/q %curl_src%
 7z x "%RELAX%\bits\curl-*.zip" -o%RELAX% -y
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -28,8 +28,13 @@ set INCLUDE=%INCLUDE%;%SSL_PATH%\include;%SSL_PATH%\include\openssl;
 set LIBPATH=%LIBPATH%;%SSL_PATH%\lib;
 set LIB=%LIB%;%SSL_PATH%\lib;
 pushd %curl_src%
-cd winbuild
-nmake /f MakeFile.vc mode=static DEBUG=no
+::cd winbuild
+nmake VC=VC12 VC12
+cd lib
+nmake /f Makefile.VC12 MACHINE=x86 cfg=release-dll
+cd ..\src
+nmake /f Makefile.VC12 MACHINE=x86 cfg=release-dll
+::nmake /f MakeFile.vc VC=12 mode=static DEBUG=no MACHINE=x86
 popd
 :: make this specific curl version available to CouchDB build script
 mklink /d %curl_path% %curl_src%

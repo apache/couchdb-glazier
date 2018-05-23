@@ -15,6 +15,9 @@ echo Using Erlang $ERTS_VSN OTP $OTP_VER in $ERL_TOP
 echo
 
 echo doing sanity checks
+
+RELAXRT=/cygdrive/c/relax
+
 # here we want to see that junction points are set up and
 # rebuild path from scratch as ./otp_build env_win32 gets it wrong
 # first up are erlang build helper scripts
@@ -22,20 +25,20 @@ PATH=$ERL_TOP/release/win32/erts-$ERTS_VSN/bin:$ERL_TOP/bootstrap/bin:$ERL_TOP/e
 
 # then MSVC9 binaries using the new junction points
 ###PATH=$PATH:/cygdrive/c/PROGRA~2/MICROS~1.0/Common7/IDE:/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN:/cygdrive/c/PROGRA~2/MICROS~1.0/Common7/Tools:/cygdrive/c/PROGRA~2/MICROS~1.0/VC/VCPACK~1
-PATH=$PATH:/relax/vc/Common7/IDE:/relax/VC/VC/BIN:/relax/VC/Common7/Tools/relax/VC/VC/vcPackages
+PATH=$PATH:$RELAXRT/vc/Common7/IDE:$RELAXRT/VC/VC/bin:$RELAXRT/VC/Common7/Tools/:$RELAXRT/VC/VC/vcPackages
 
 #### then .Net framework which we need to have clean manifests and SxS for Win7 x64
 #PATH=$PATH:/cygdrive/c/WINDOWS/Microsoft.NET/Framework:/cygdrive/c/Microsoft.NET/Framework/v4.0.30319:/cygdrive/c/Microsoft.NET/Framework/v3.5
 
 # then SDKs
-###PATH=$PATH:/cygdrive/c/PROGRA~1/MICROS~1/Windows/v7.0/bin
+###PATH=$PATH:/cygdrive/c/PROGRA~1//MICROS~1/Windows/v7.0/bin
 ###PATH=$PATH:/cygdrive/c/PROGRA~1/MICROS~1/Windows/v6.0A/bin
-PATH=$PATH:/relax/SDK/bin:/relax/SDK/bin/x64
+PATH=$PATH:$RELAXRT/SDK/bin:$RELAXRT/SDK/bin/x64
 
 # some additional tools in SDK
 # C:\Program Files\Microsoft Windows Performance Toolkit;
 # C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools;
-PATH=$PATH:/cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ Windows\ Performance\ Toolkit:/relax/SDK/bin/NETFX\ 4.5.1\ Tools:/cygdrive/c/Program\ Files\ \(x86\)/Windows\ Kits/8.1/bin/x86:/cygdrive/c/Program\ Files\ \(x86\)/Windows\ Kits/8.1/bin/x64
+PATH=$PATH:/cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ Windows\ Performance\ Toolkit:$RELAXRT/SDK/bin/NETFX\ 4.5.1\ Tools:/cygdrive/c/Program\ Files\ \(x86\)/Windows\ Kits/8.1/bin/x86:/cygdrive/c/Program\ Files\ \(x86\)/Windows\ Kits/8.1/bin/x64
 
 # then erlang and couchdb build helper scripts
 PATH=$PATH:/cygdrive/c/openssl/bin:/cygdrive/c/relax/nsis:/cygdrive/c/relax/inno5
@@ -44,7 +47,7 @@ PATH=$PATH:/cygdrive/c/openssl/bin:/cygdrive/c/relax/nsis:/cygdrive/c/relax/inno
 PATH=$PATH:/usr/local/bin:/usr/bin:/bin
 
 # then glazier tools
-PATH=$PATH:/relax/bin:/relax/bits
+PATH=$PATH:$RELAXRT/bin:$RELAXRT/bits
 
 # then windows
 PATH=$PATH:`/usr/bin/cygpath $WINDIR`/system32:`/usr/bin/cygpath $WINDIR`:`/usr/bin/cygpath $WINDIR`/System32/Wbem:`/usr/bin/cygpath $WINDIR`/system32/WindowsPowerShell/v1.0
