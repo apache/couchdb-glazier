@@ -1,3 +1,5 @@
+*.tar.gz
+*.tar.bz2
 release/*
 bits/*.gz
 bits/*.exe
