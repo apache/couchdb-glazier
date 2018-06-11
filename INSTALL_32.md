@@ -11,15 +11,13 @@ dependencies within the same runtime.
 We hope Glazier simplifies using Erlang and CouchDB for you, giving
 a consistent, repeatable build environment.
 
-For 32bit build instructions, see [this documentation](INSTALL_32.md)
-
 
 # Base Requirements
 
-- 64-bit Windows 7 or 8.1. *As of CouchDB 2.0 we only support a 64-bit build of CouchDB. Altought, 32bit instructions are available [here](INSTALL_32.md)*.
+- 64-bit Windows 7 or 8.1. *This is required for Mozilla build setup*.
   - We like 64-bit Windows 7, 8.1 or 10 Enterprise N (missing Media Player, etc.) from MSDN.
 - If prompted, reboot after installing the .NET framework.
-- [Visual Studio 2013 x64 Community Edition](https://www.visualstudio.com/vs/older-downloads/) installed on the *C: drive*. Downloading requires a free Dev Essentials subscription from Microsoft.
+- [Visual Studio 2013 x86 Community Edition](https://www.visualstudio.com/vs/older-downloads/) installed on the *C: drive*. Downloading requires a free Dev Essentials subscription from Microsoft.
 - [Chocolatey](https://chocolatey.org). From an *administrative* __cmd.exe__ command prompt, run:
 
 ```dos
@@ -31,22 +29,48 @@ For 32bit build instructions, see [this documentation](INSTALL_32.md)
 
 # Install Pre-requisites
 
-## Clean Package Installs with Chocolatey, cyg-get and pip
+## Clean Package Installs with Chocolatey, Cygwin and pip
 
 These packages install silently, without intervention. Cut and paste them
 into an **Administrator** command prompt.
 
 ```dos
-cinst -y git 7zip.commandline StrawberryPerl nasm cyg-get wixtoolset python aria2 nodejs.install make
-cinst -y nssm --version 2.24.101-g897c7ad
-cyg-get p7zip autoconf binutils bison gcc-code gcc-g++ gdb git libtool make patchutils pkg-config readline file renameutils socat time tree util-linux wget
+cinst -y git 7zip.commandline StrawberryPerl nasm wixtoolset python aria2 nodejs.install make
+cinst -y nssm --version 2.24.101-g897c7ad --x86
 pip install sphinx docutils pygments
 ```
 
+For Cygwin, install the 32bit version.
+
+Required packages:
+
+- cyg-get
+- p7zip
+- autoconf
+- binutils
+- bison
+- gcc-code
+- gcc- g++
+- gdb
+- git
+- libtool
+- make
+- patchutils
+- pkg-config
+- readline
+- file
+- renameutils
+- socat
+- time
+- tree
+- util-linux
+- wget
+
 *Note: Do NOT install curl or help2man inside CygWin!*
+*Note: If you have problems compiling erlang, I recommend you check most of the devel packages and hope for the best!*
 
 ## Mozilla build
-Fetch the latest Mozilla Build version from
+Fetch [Mozilla Build 2.2](https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-2.2.0.exe) from
 https://wiki.mozilla.org/MozillaBuild and install to c:\mozilla-build
 with all defaults.
 
@@ -55,7 +79,7 @@ with all defaults.
 Make a new shortcut on the desktop. The location should be:
 
 ```dos
-cmd.exe /E:ON /V:ON /T:1F /K ""C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"" amd64 && color 1f
+cmd.exe /E:ON /V:ON /T:1F /K ""C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"" x86 && color 1f
 ```
 
 Name it "CouchDB SDK Prompt".
@@ -70,19 +94,14 @@ Start a CouchDB SDK Prompt window and run
 following:
 
 ```dos
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64\cl.exe
-C:\Program Files (x86)\Windows Kits\8.1\bin\x64\mc.exe
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\cl.exe
 C:\Program Files (x86)\Windows Kits\8.1\bin\x86\mc.exe
-C:\Program Files (x86)\Windows Kits\8.1\bin\x64\mt.exe
 C:\Program Files (x86)\Windows Kits\8.1\bin\x86\mt.exe
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64\link.exe
-C:\tools\cygwin\bin\link.exe
-C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools\x64\lc.exe
-C:\Program Files (x86)\Windows Kits\8.1\bin\x64\rc.exe
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe
+C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools\lc.exe
 C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64\nmake.exe
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\nmake.exe
 C:\ProgramData\chocolatey\bin\make.exe
-C:\tools\cygwin\bin\make.exe
 ```
 
 Stop here if your results are not *identical*. If you are unable to
@@ -97,13 +116,15 @@ In the CouchDB SDK Prompt, run the following commands:
 mkdir c:\relax    
 cd c:\relax
 rd /s/q SDK VC nasm inno5 nsis strawberry
-mklink /j c:\relax\bin c:\relax\glazier\bin
+mklink /j c:\relax\bin c:\relax\couchdb-glazier\bin
 mklink /j c:\relax\nasm "c:\Program Files (x86)\NASM"
-mklink /j c:\relax\SDK "c:\Program Files (x86)\Windows Kits\8.1"
+mklink /j c:\relax\SDK "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A"
 mklink /j c:\relax\VC "C:\Program Files (x86)\Microsoft Visual Studio 12.0"
 mklink /j c:\openssl c:\relax\openssl
 setx RELAX c:\relax
 ```
+
+*Note: The SDK version might vary base on your OS. This was done with Windows 10 Professional*
 
 Close all open command prompts. Now we're ready to go!
 
@@ -117,13 +138,13 @@ Open a new `CouchDB SDK Prompt` and run the following:
 cd c:\relax
 git config --global core.autocrlf input
 git clone https://github.com/apache/couchdb-glazier
-c:\relax\bin\aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt
+aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt
 color 1f
 ```
 
 As of 2017-07-08, this will download the source for the following versions of our dependencies:
 
-* MS Visual C++ x64 Redistributable for VC12 with patches
+* MS Visual C++ x86 Redistributable for VC12 with patches
 * OpenSSL 1.0.2l
 * curl 7.49.1
 * Erlang:
@@ -134,30 +155,30 @@ As of 2017-07-08, this will download the source for the following versions of ou
 * SpiderMonkey 1.8.5
 
 
-## Build & Test 64-bit OpenSSL
+## Build & Test 32-bit OpenSSL
 
 In the same `CouchDB SDK Prompt`, run the following:
 
 ```dos
-cd %RELAX%\bin && build_openssl.cmd
+cd %RELAX%\bin && build_openssl_32.cmd
 ```
 
 Close your `CouchDB SDK Prompt`.
 
-## Build 64-bit libcurl
+## Build 32-bit libcurl
 
 Open a new `CouchDB SDK Prompt` and run the following:
 
 ```dos
-cd %RELAX%\bin && build_curl.cmd
+cd %RELAX%\bin && build_curl_32.cmd
 ```
 
-## Build 64-bit ICU
+## Build 32-bit ICU
 
 In the same `CouchDB SDK Prompt` run the following:
 
 ```dos
-cd %RELAX%\bin && build_icu.cmd
+cd %RELAX%\bin && build_icu_32.cmd
 ```
 
 Close the window.
@@ -165,7 +186,7 @@ Close the window.
 ## Start a UNIX-friendly shell with MS compilers
 
 1. Start your `CouchDB SDK Prompt` as above
-2. Launch a cygwin erl-ified shell via `c:\relax\bin\shell.cmd`
+2. Launch a cygwin erl-ified shell via `C:\relax\bin\shell_32.cmd`
 3. Select 18.3 (unless you know what you are doing!)
 4. Select `b for bash prompt`.
 
@@ -184,20 +205,20 @@ echo "skipping gs" > lib/gs/SKIP
 echo "skipping wx" > lib/wx/SKIP
 echo "skipping ic" > lib/ic/SKIP
 echo "skipping jinterface" > lib/jinterface/SKIP
-eval `$ERL_TOP/otp_build env_win32 x64`
+eval `$ERL_TOP/otp_build env_win32`
 ```
 
 At this point, check your paths. Run `which cl link mc lc mt nmake rc`.
 The output should match the following:
 
 ```bash
-/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN/amd64/cl
-/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN/amd64/link
-/cygdrive/c/PROGRA~2/WI3CF2~1/8.1/bin/x64/mc
-/cygdrive/c/PROGRA~2/MICROS~1/Windows/v8.1A/bin/NETFX4~1.1TO/x64/lc
-/cygdrive/c/PROGRA~2/WI3CF2~1/8.1/bin/x64/mt
-/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN/amd64/nmake
-/cygdrive/c/PROGRA~2/WI3CF2~1/8.1/bin/x64/rc
+/cygdrive/c/relax/VC/VC/bin/cl
+/cygdrive/c/relax/VC/VC/bin/link
+/cygdrive/c/Program Files (x86)/Windows Kits/8.1/bin/x86/mc
+/cygdrive/c/relax/SDK/bin/NETFX 4.5.1 Tools/lc
+/cygdrive/c/Program Files (x86)/Windows Kits/8.1/bin/x86/mt
+/cygdrive/c/relax/VC/VC/bin/nmake
+/cygdrive/c/Program Files (x86)/Windows Kits/8.1/bin/x86/rc
 ```
 
 If it does not, stop and diagnose.
@@ -206,7 +227,7 @@ Now you can proceed to build Erlang, closing the window when
 done:
 
 ```bash
-erl_config.sh
+erl_config_32.sh
 # Ensure OpenSSL is found by the configure script.
 # If you see any warnings, stop and diagnose.
 erl_build.sh
@@ -224,16 +245,16 @@ Start by launching a fresh `CouchDB SDK prompt`, then setup the
 Mozilla build environment with the command:
 
 ```dos
-call c:\mozilla-build\start-shell-msvc2013-x64.bat
+call c:\mozilla-build\start-shell-msvc2013.bat
 ```
 
 Now, ensure the output of `which cl lc link mt rc make` matches
 the following:
 
 ```dos
-/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64/cl.exe
+/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64_x86/cl.exe
 /c/Program Files (x86)/Microsoft SDKs/Windows/v8.1A/bin/NETFX 4.5.1 Tools/x64/lc.exe
-gram Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64/link.exe
+/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64_x86/link.exe
 /c/Program Files (x86)/Windows Kits/8.1/bin/x64/mt.exe
 /c/Program Files (x86)/Windows Kits/8.1/bin/x64/rc.exe
 /local/bin/make.exe
@@ -249,7 +270,7 @@ tar xzf bits/js185-1.0.0.tar.gz
 patch -p0 </c/relax/couchdb-glazier/bits/js185-msvc2013.patch
 cd js-1.8.5/js/src
 autoconf-2.13
-./configure --enable-static --enable-shared-js --disable-debug-symbols --disable-debug --disable-debugger-info-modules --target=x86_64-pc-mingw32 --host=x86_64-pc-mingw32
+./configure --enable-static --enable-shared-js --disable-debug-symbols --disable-debug --disable-debugger-info-modules
 make
 ```
 
@@ -268,6 +289,8 @@ make check
 Close the prompt window by entering `exit` twice.
 
 ## Building CouchDB itself
+
+Before compiling CouchDB, you need to make sure that rebar is installed on your system and accessible via your %PATH% environment.
 
 Start a new `SDK prompt`, then run `c:\relax\bin\shell.cmd`.
 Select `Erlang 18.3` and `w for a Windows prompt`.
@@ -301,8 +324,8 @@ To build an installer using WiX to create a full Windows .msi, run:
 
 ```dos
     make -f Makefile.win release
-    cd \relax\glazier
-    bin\build_installer.cmd
+    cd \relax\couchdb-glazier
+    bin\build_installer_32.cmd
 ```
 
 You made it! Time to relax. :D
