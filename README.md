@@ -37,8 +37,9 @@ into an **Administrator** command prompt.
 ```dos
 cinst -y git 7zip.commandline StrawberryPerl nasm cyg-get wixtoolset python aria2 nodejs.install make
 cinst -y nssm --version 2.24.101-g897c7ad
+cinst -y -i elixir
 cyg-get p7zip autoconf binutils bison gcc-code gcc-g++ gdb git libtool make patchutils pkg-config readline file renameutils socat time tree util-linux wget
-pip install sphinx docutils pygments
+pip install sphinx docutils pygments nose hypothesis
 ```
 
 *Note: Do NOT install curl or help2man inside CygWin!*
@@ -279,7 +280,7 @@ cd couchdb
 # git checkout --track origin/2.0.x
 git clean -fdx && git reset --hard
 powershell -ExecutionPolicy Bypass .\configure.ps1 -WithCurl
-make -f Makefile.win check
+make check
 ```
 
 This will build a development version of CouchDB runnable via
@@ -292,13 +293,13 @@ To build a self-contained CouchDB installation (also known as an Erlang
 _release_), after running the above use:
 
 ```dos
-    make -f Makefile.win release
+    make release
 ```
 
 To build an installer using WiX to create a full Windows .msi, run:
 
 ```dos
-    make -f Makefile.win release
+    make release
     cd \relax\glazier
     bin\build_installer.cmd
 ```
