@@ -35,7 +35,7 @@ These packages install silently, without intervention. Cut and paste them
 into an **Administrator** command prompt.
 
 ```dos
-cinst -y git 7zip.commandline StrawberryPerl nasm cyg-get wixtoolset python aria2 nodejs.install make
+cinst -y git 7zip.commandline StrawberryPerl nasm cyg-get wixtoolset python3 aria2 nodejs.install make
 cinst -y nssm --version 2.24.101-g897c7ad
 cinst -y -i elixir
 cyg-get p7zip autoconf binutils bison gcc-code gcc-g++ gdb git libtool make patchutils pkg-config readline file renameutils socat time tree util-linux wget
@@ -286,7 +286,7 @@ make check
 This will build a development version of CouchDB runnable via
 
 ```dos
-python dev\run <-n1> <--with-admin-party-please>
+dev\run <-n1> <--with-admin-party-please>
 ```
 
 To build a self-contained CouchDB installation (also known as an Erlang
