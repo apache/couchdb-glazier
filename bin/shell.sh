@@ -22,7 +22,7 @@ PATH=$ERL_TOP/release/win32/erts-$ERTS_VSN/bin:$ERL_TOP/bootstrap/bin:$ERL_TOP/e
 
 # then MSVC9 binaries using the new junction points
 ###PATH=$PATH:/cygdrive/c/PROGRA~2/MICROS~1.0/Common7/IDE:/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN:/cygdrive/c/PROGRA~2/MICROS~1.0/Common7/Tools:/cygdrive/c/PROGRA~2/MICROS~1.0/VC/VCPACK~1
-PATH=$PATH:`/usr/bin/cygpath $OPT`/vc/Common7/IDE:`/usr/bin/cygpath $OPT`/VC/VC/BIN:`/usr/bin/cygpath $OPT`/VC/Common7/Tools`/usr/bin/cygpath $OPT`/VC/VC/vcPackages
+PATH=$PATH:/relax/vc/Common7/IDE:/relax/VC/VC/BIN:/relax/VC/Common7/Tools/relax/VC/VC/vcPackages
 
 #### then .Net framework which we need to have clean manifests and SxS for Win7 x64
 PATH=$PATH:/cygdrive/c/WINDOWS/Microsoft.NET/Framework:/cygdrive/c/Microsoft.NET/Framework/v4.0.30319:/cygdrive/c/Microsoft.NET/Framework/v3.5
@@ -30,21 +30,21 @@ PATH=$PATH:/cygdrive/c/WINDOWS/Microsoft.NET/Framework:/cygdrive/c/Microsoft.NET
 # then SDKs
 ###PATH=$PATH:/cygdrive/c/PROGRA~1/MICROS~1/Windows/v7.0/bin
 ###PATH=$PATH:/cygdrive/c/PROGRA~1/MICROS~1/Windows/v6.0A/bin
-PATH=$PATH:`/usr/bin/cygpath $OPT`/SDK/bin:`/usr/bin/cygpath $OPT`/SDK/bin/x64
+PATH=$PATH:/relax/SDK/bin:/relax/SDK/bin/x64
 
 # some additional tools in SDK
 # C:\Program Files\Microsoft Windows Performance Toolkit;
 # C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools;
-PATH=$PATH:/cygdrive/c/Program\ Files/Microsoft\ Windows\ Performance\ Toolkit:`/usr/bin/cygpath $OPT`/SDK/bin/NETFX\ 4.0\ Tools
+PATH=$PATH:/cygdrive/c/Program\ Files/Microsoft\ Windows\ Performance\ Toolkit:/relax/SDK/bin/NETFX\ 4.0\ Tools
 
 # then erlang and couchdb build helper scripts
-PATH=$PATH:/cygdrive/c/openssl/bin:/cygdrive/c/opt/nsis:/cygdrive/c/opt/inno5
+PATH=$PATH:/cygdrive/c/openssl/bin:/cygdrive/c/relax/nsis:/cygdrive/c/relax/inno5
 
 # then cygwin tools
 PATH=$PATH:/usr/local/bin:/usr/bin:/bin
 
 # then glazier tools
-PATH=$PATH:`/usr/bin/cygpath $RELAX`/bin:`/usr/bin/cygpath $RELAX`/bits
+PATH=$PATH:/relax/bin:/relax/bits
 
 # then windows
 PATH=$PATH:`/usr/bin/cygpath $WINDIR`/system32:`/usr/bin/cygpath $WINDIR`:`/usr/bin/cygpath $WINDIR`/System32/Wbem:`/usr/bin/cygpath $WINDIR`/system32/WindowsPowerShell/v1.0
@@ -66,7 +66,9 @@ RC_SH_DEBUG_LOG=$TMP/rc_r$OTP_VER.log
 MD_SH_DEBUG_LOG=$TMP/md_r$OTP_VER.log
 MC_SH_DEBUG_LOG=$TMP/mc_r$OTP_VER.log
 
-export OVERRIDE_TARGET CC CXX AR RANLIB OVERRIDE_CONFIG_CACHE_STATIC OVERRIDE_CONFIG_CACHE INCLUDE LIB LIBPATH LINK CL PATH TMP CC_SH LD_SH RC_SH MD_SH MC_SH ERL_TOP ERTS_VSN OTP_VER SHELL RELAX WIN32_WRAPPER_PATH OVERRIDE_TARGET
+TERM=xterm
+
+export OVERRIDE_TARGET CC CXX AR RANLIB OVERRIDE_CONFIG_CACHE_STATIC OVERRIDE_CONFIG_CACHE INCLUDE LIB LIBPATH LINK CL PATH TMP CC_SH LD_SH RC_SH MD_SH MC_SH ERL_TOP ERTS_VSN OTP_VER SHELL RELAX WIN32_WRAPPER_PATH OVERRIDE_TARGET TERM
 
 # ensure we have an ERL_TOP to go to
 mkdir -p $ERL_TOP > /dev/null 2>&1
@@ -79,10 +81,20 @@ echo current path:
 echo $PATH | /bin/sed 's/:/\n/g'
 echo
 echo please check the toolkit paths point to Microsoft versions:
-which mc; which lc; which cl; which link; which mt
+which mc lc cl link mt rc
 echo
 
 echo Ready to build Erlang and CouchDB using Erlang $ERTS_VSN OTP $OTP_VER in $ERL_TOP
 echo Time to Relax.
 
-bash -i
+if [ -z "$BUILD_WITH_JENKINS" ] ; then
+  bash -i
+else
+	cd $WORKSPACE
+	git clean -fdx
+	git reset --hard
+	./bootstrap
+	/relax/bin/couchdb_config.sh
+	/relax/bin/couchdb_build.sh
+fi
+

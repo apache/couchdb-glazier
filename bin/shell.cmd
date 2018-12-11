@@ -17,58 +17,62 @@ if not defined CURL_PATH set CURL_PATH=%RELAX%\curl
 if not defined ZLIB_PATH set ZLIB_PATH=%RELAX%\zlib
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: haul in MSVC compiler configuration
+:: TODO remove dependency on x86 flag
+call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x86 /release
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: LIB and INCLUDE are preset by Windows SDK and/or Visual C++ shells
 :: however VC++ uses LIB & INCLUDE and SDK uses Lib & Include. In Cygwin
 :: these are *NOT* the same but when we shell out to CL.exe and LINK.exe
 :: all is well again
 
-:: opt is for build tools
-:: glazier our scripts
 :: relax for couchdb
 :: werldir for building erlang
 
-if not defined OPT set OPT=c:\opt
 if not defined RELAX set RELAX=c:\relax
 if not defined WERLDIR set WERLDIR=c:\werl
-setx OPT %OPT% > NUL:
+setx WERLDIR %WERLDIR% > NUL:
 setx RELAX %RELAX% > NUL:
 
-set LIB=%OPT%\VC\VC\lib;%OPT%\SDK\lib;%LIB%
-SET INCLUDE=%OPT%\VC\VC\Include;%OPT%\SDK\Include;%OPT%\SDK\Include\gl;%INCLUDE%
+set LIB=%RELAX%\VC\VC\lib;%RELAX%\SDK\lib;%LIB%
+SET INCLUDE=%RELAX%\VC\VC\Include;%RELAX%\SDK\Include;%RELAX%\SDK\Include\gl;%INCLUDE%
 
-set INCLUDE=%INCLUDE%;%SSL_PATH%\include\openssl;%SSL_PATH%\include;%CURL_PATH%\include\curl;%ICU_PATH%\include;%ZLIB_PATH%\include;
-set LIBPATH=%LIBPATH%;%SSL_PATH%\lib;%CURL_PATH%\lib;%ICU_PATH%\lib;%ZLIB_PATH%\lib;
-set LIB=%LIB%;%SSL_PATH%\lib;%CURL_PATH%\lib;%ICU_PATH%\lib;%ZLIB_PATH%\lib;
+set INCLUDE=%INCLUDE%;%SSL_PATH%\include\openssl;%SSL_PATH%\include;%CURL_PATH%\include\curl;%ICU_PATH%\include;
+set LIBPATH=%LIBPATH%;%SSL_PATH%\lib;%CURL_PATH%\lib;%ICU_PATH%\lib;
+set LIB=%LIB%;%SSL_PATH%\lib;%CURL_PATH%\lib;%ICU_PATH%\lib;
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::check which version of erlang setup we want
+:: check which version of erlang setup we want
+:: pick up from jenkins if required
+if not defined BUILD_WITH_JENKINS goto select
+if not defined OTP_REL goto select
+goto %OTP_REL%
+:: no default, so let's ask the user instead!
 :: choice.exe exists on all windows platforms since MSDOS but not on XP
+:select
 echo select:
-echo       3 for R14b03
+echo       3 for R15b03-1
 echo       4 for R14b04
-echo       5 for R15B
+echo       A for R16A
+echo       B for R16B
 echo       1 for R15b01
 set /p choice=or 0 to exit to the shell.
 :: then get to unix goodness as fast as possible
 if /i "%choice%"=="0" goto win_shell
 ::::if /i "%choice%"=="2" goto R......
-if /i "%choice%"=="3" goto R14B03
+if /i "%choice%"=="3" goto R15B03-1
 if /i "%choice%"=="4" goto R14B04
-if /i "%choice%"=="5" goto R15B
+if /i "%choice%"=="A" goto R16A
+if /i "%choice%"=="B" goto R16B
 if /i "%choice%"=="1" goto R15B01
 :: else
 goto eof
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:R14B03
-set ERTS_VSN=5.8.4
-set OTP_REL=R14B03
-goto unix_shell
-
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:R15B
-set ERTS_VSN=5.9
-set OTP_REL=R15B
+:R15B03-1
+set ERTS_VSN=5.9.3.1
+set OTP_REL=R15B03-1
 goto unix_shell
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
