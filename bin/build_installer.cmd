@@ -59,7 +59,7 @@ echo New Log >%COUCHDB%\var\log\couchdb.log
 :: we'd want to manually merge. heat will regenerate all GUIDS and that will
 :: cause problems in the field if we ever start upgrading rather than
 :: uninstall/reinstall. It's the -gg flag that results in this behaviour.
-heat dir %COUCHDB% -dr APPLICATIONFOLDER -cg CouchDBFilesGroup -gg -g1 -sfrag -srd -sw5150 -var "var.CouchDir" -out couchdbfiles.wxs
+heat dir %COUCHDB% -dr APPLICATIONFOLDER -cg CouchDBFilesGroup -gg -g1 -sfrag -srd -sw5150 -var "var.CouchDir" -t heat-filter.xslt -out couchdbfiles.wxs
 
 :: Build MSI for installation
 candle -arch x64 -ext WiXUtilExtension couchdb.wxs
