@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Compile with:
-	>candle couchdb.wxs
-	>light -ext WixUIExtension -cultures:en-us couchdb.wixobj couchdbfiles.wixobj -out couchdb.msi
+    >candle couchdb.wxs
+    >light -ext WixUIExtension -cultures:en-us couchdb.wixobj couchdbfiles.wixobj -out couchdb.msi
 -->
 <?define bitness = "(64 bit)" ?>
 <?define Win64 = "yes" ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
    xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-<!-- Substitute Version="####VERSION####" below and uncomment the
-     sed line in build_installer.cmd if we ever can guarantee numeric
-     version numbers. Until then, this must be manually updated per
-     release.
--->
-	<Product Id="4CD776E0-FADF-4831-AF56-E80E39F34CFC"
-		Name="Apache CouchDB"
-		Language="1033"
-		Version="2.3.1.1"
-		Manufacturer="The Apache Software Foundation"
-		UpgradeCode="9449123B-61C4-40DE-AA6C-1BB9AA02EB67">
 
-		<Package InstallerVersion="405"
-			Compressed="yes" />
-		<Media Id="1"
-			Cabinet="media1.cab"
-			EmbedCab="yes" />
+   <Product Id="4CD776E0-FADF-4831-AF56-E80E39F34CFC"
+      Name="Apache CouchDB"
+      Language="1033"
+      Version="###VERSION###"
+      Manufacturer="The Apache Software Foundation"
+      UpgradeCode="9449123B-61C4-40DE-AA6C-1BB9AA02EB67">
 
-        <!--Permissions-->
-        <PropertyRef Id="WIX_ACCOUNT_LOCALSYSTEM" />
-        <PropertyRef Id="WIX_ACCOUNT_USERS" />
-        <PropertyRef Id="WIX_ACCOUNT_ADMINISTRATORS" />
+      <Package InstallerVersion="500"
+         Compressed="yes" />
+      <Media Id="1"
+         Cabinet="media1.cab"
+         EmbedCab="yes" />
 
-		<!--Directory structure-->
-        <Property Id="ApplicationFolderName" Value="C:\CouchDB" />
-		<Directory Id="TARGETDIR"
-			Name="SourceDir">
-			<Directory Id="APPLICATIONFOLDER" Name="CouchDB">
+      <Binary Id="CouchIniActionDll" SourceFile="CustomAction\CouchIniAction.CA.dll" />
+
+      <!--Permissions-->
+      <PropertyRef Id="WIX_ACCOUNT_LOCALSYSTEM" />
+      <PropertyRef Id="WIX_ACCOUNT_USERS" />
+      <PropertyRef Id="WIX_ACCOUNT_ADMINISTRATORS" />
+
+      <!--Directory structure-->
+      <Directory Id="TARGETDIR" Name="SourceDir">
+         <Directory Id="PROGRAMFILESFORSURE" Name="Program Files">
+            <Directory Id="APPLICATIONFOLDER" Name="Apache CouchDB">
                <Component Id="AppFolder_comp" DiskId="1" Guid="C2C4462F-D9AE-4178-9E49-E2A85C256635">
                   <CreateFolder>
                      <Permission User="[WIX_ACCOUNT_LOCALSYSTEM]" GenericAll="yes" />
@@ -44,156 +41,238 @@
                   </CreateFolder>
                </Component>
             </Directory>
-			<Directory Id="ProgramMenuFolder">
-				<Directory Id="OurShortcutsDir" Name="Apache CouchDB" />
-			</Directory>
-		</Directory>
+         </Directory>
+         <Directory Id="ProgramMenuFolder">
+            <Directory Id="OurShortcutsDir" Name="Apache CouchDB" />
+         </Directory>
+      </Directory>
 
-		<DirectoryRef Id="TARGETDIR">
-    		<Merge Id="VCRedist120" SourceFile="C:\Program Files (x86)\Common Files\Merge Modules\Microsoft_VC120_CRT_x64.msm" DiskId="1" Language="0"/>
-		</DirectoryRef>
-		
-        <!--Icons-->
-        <Icon Id="couchdb.ico" SourceFile="..\bits\couchdb-64x64.ico" />
-        <Property Id="ARPPRODUCTICON" Value="couchdb.ico" />
+      <DirectoryRef Id="TARGETDIR">
+         <Merge Id="VCRedist141" SourceFile="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Redist\MSVC\14.16.27012\MergeModules\Microsoft_VC141_CRT_x64.msm" DiskId="1" Language="0"/>
+      </DirectoryRef>
 
-		<!--Start Menu Shortcuts-->
-		<DirectoryRef Id="OurShortcutsDir">
-			<Component Id="CMP_Shortcuts"
-				Guid="A2754FBF-3E43-4AEF-A70A-14D78CAC2784">
+      <SetProperty Id="ARPINSTALLLOCATION" Value="[APPLICATIONFOLDER]"
+         After="CostFinalize" />
 
-				<Shortcut Id="DocumentationStartMenuShortcut"
-					Name="Apache CouchDB Documentation"
-					Description="Read the CouchDB Documentation"
-					Target="[APPLICATIONFOLDER]\share\www\docs\index.html" />
+      <!--Icons-->
+      <Icon Id="couchdb.ico" SourceFile="..\bits\couchdb-500x500.ico" />
+      <Property Id="ARPPRODUCTICON" Value="couchdb.ico" />
 
-				<util:InternetShortcut Id="FauxtonStartMenuShortcut"
-					Name="Apache CouchDB Fauxton" 
-                    Target="http://localhost:5984/_utils/index.html" />
-					
-				<Shortcut Id="ApplicationServiceMenuShortcut"
-                    Name="Start or Stop Apache CouchDB Service"
-					Description="Start or stop the Apache CouchDB service"
-                    Icon="couchdb.ico"
-                    Target="[System64Folder]\services.msc" />
-					
-				<Shortcut Id="UninstallShortcut"
-					Name="Uninstall Apache CouchDB"
-					Description="Uninstalls Apache CouchDB"
-					Target="[System64Folder]msiexec.exe"
-					Arguments="/x [ProductCode]" />
-					
-				<RemoveFolder Id="RemoveOurShortcutsDir"
-					On="uninstall" />
-				
-				<RegistryValue Root="HKCU"
-					Key="Software\Apache\CouchDB"
-					Name="installed"
-					Type="integer"
-					Value="1"
-					KeyPath="yes" />
-			</Component>
-		</DirectoryRef>
-		
-		<!--Features-->
-		<Feature Id="ProductFeature"
-			Title="Droplet"
-			Level="1">
-			<ComponentRef Id="CMP_Shortcuts" />
-            <ComponentRef Id="AppFolder_comp" />
-			<ComponentGroupRef Id="CouchDBFilesGroup" />
-		</Feature>
-		
-		<Feature Id="VCRedist120" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
-    		<MergeRef Id="VCRedist120"/>
-		</Feature>
-		
-		<!--Custom actions and execute sequences-->
-	    <!-- Prevent downgrading -->
-	    <!-- <CustomAction Id="PreventDowngrading" After="FindRelatedProducts" Error="Newer version already installed." />  -->
-        <SetProperty 
-            Id="InstallCouchDBService"
-            Value="&quot;[APPLICATIONFOLDER]bin\nssm.exe&quot; install &quot;Apache CouchDB&quot; [APPLICATIONFOLDER]bin\couchdb.cmd"
-            Before="InstallCouchDBService"
-            Sequence="execute"
-        />
-        <CustomAction
-            Id="InstallCouchDBService"
-            BinaryKey="WixCA"
-            DllEntry="WixQuietExec64"
-            Execute="deferred"
-            Return="ignore"
-            Impersonate="no"
-        />
+      <!--Start Menu Shortcuts-->
+      <DirectoryRef Id="OurShortcutsDir">
+         <Component Id="CMP_Shortcuts"
+            Guid="A2754FBF-3E43-4AEF-A70A-14D78CAC2784">
 
-        <SetProperty
-            Id="StartCouchDBService"
-            Value="&quot;[APPLICATIONFOLDER]bin\nssm.exe&quot; start &quot;Apache CouchDB&quot;"
-            Before="StartCouchDBService"
-            Sequence="execute"
-        />
-        <CustomAction
-            Id="StartCouchDBService"
-            BinaryKey="WixCA"
-            DllEntry="WixQuietExec64"
-            Execute="deferred"
-            Return="ignore"
-            Impersonate="no"
-        />
+            <Shortcut Id="DocumentationStartMenuShortcut"
+               Name="Apache CouchDB Documentation"
+               Description="Read the CouchDB Documentation"
+               Target="[APPLICATIONFOLDER]\share\www\docs\index.html" />
 
-        <SetProperty
-            Id="StopCouchDBService"
-            Value="&quot;[APPLICATIONFOLDER]bin\nssm.exe&quot; stop &quot;Apache CouchDB&quot;"
-            Before="StopCouchDBService"
-            Sequence="execute"
-        />
-        <CustomAction
-            Id="StopCouchDBService"
-            BinaryKey="WixCA"
-            DllEntry="WixQuietExec64"
-            Execute="deferred"
-            Return="ignore"
-            Impersonate="no"
-        />
+            <util:InternetShortcut Id="FauxtonStartMenuShortcut"
+               Name="Apache CouchDB Fauxton" 
+               Target="http://localhost:5984/_utils/index.html" />
 
-        <SetProperty
-            Id="RemoveCouchDBService"
-            Value="&quot;[APPLICATIONFOLDER]bin\nssm.exe&quot; remove &quot;Apache CouchDB&quot; confirm"
-            Before="RemoveCouchDBService"
-            Sequence="execute"
-        />
-        <CustomAction
-            Id="RemoveCouchDBService"
-            BinaryKey="WixCA"
-            DllEntry="WixQuietExec64"
-            Execute="deferred"
-            Return="ignore"
-            Impersonate="no"
-        />
-     
-        <!--Custom warning: no spaces in install path!-->
-        <Property Id="DirWarningText"
-           Value="Warning! Apache CouchDB must be installed into a path with no spaces. This installer will not prevent you from doing so, but the resulting installation will not work correctly." />
-        <UIRef Id="CouchDBWixUI" />
-		    
-		<!--Installer prefs-->
-        <WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
-        <WixVariable Id="WixUIBannerBmp" Value="..\bits\couchdb-banner.bmp" />
-        <WixVariable Id="WixUIDialogBmp" Value="..\bits\couchdb-dialog.bmp" />
-		<Property Id="WIXUI_INSTALLDIR"
-			Value="APPLICATIONFOLDER" />
-		<Property Id="CA_EXCEPTION" Value="None" />
-		<Property Id="SCHEDULEREBOOT" Value="0" />
-        <InstallExecuteSequence>
-           <Custom Action="InstallCouchDBService" After="InstallFiles" />
-           <Custom Action="StartCouchDBService" After="InstallCouchDBService" />
-           <Custom Action="StopCouchDBService" After="MsiUnpublishAssemblies" >
-              Installed AND (REMOVE = "ALL")
-           </Custom>
-           <Custom Action="RemoveCouchDBService" After="StopCouchDBService" >
-              Installed AND (REMOVE = "ALL")
-           </Custom>
-        </InstallExecuteSequence>
-	</Product>
+            <Shortcut Id="ApplicationServiceMenuShortcut"
+               Name="Start or Stop Apache CouchDB Service"
+               Description="Start or stop the Apache CouchDB service"
+               Icon="couchdb.ico"
+               Target="[System64Folder]\services.msc" />
+
+            <Shortcut Id="UninstallShortcut"
+               Name="Uninstall Apache CouchDB"
+               Description="Uninstalls Apache CouchDB"
+               Target="[System64Folder]msiexec.exe"
+               Arguments="/x [ProductCode]" />
+
+            <RemoveFolder Id="RemoveOurShortcutsDir"
+               On="uninstall" />
+
+            <RegistryValue Root="HKCU"
+               Key="Software\Apache\CouchDB"
+               Name="installed"
+               Type="integer"
+               Value="1"
+               KeyPath="yes" />
+         </Component>
+      </DirectoryRef>
+
+      <!--Features-->
+      <Feature Id="ProductFeature"
+         Title="Droplet"
+         Level="1">
+         <ComponentRef Id="CMP_Shortcuts" />
+         <ComponentRef Id="AppFolder_comp" />
+         <ComponentGroupRef Id="CouchDBFilesGroup" />
+      </Feature>
+
+      <Feature Id="VCRedist141" Title="Visual C++ 14.1 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+         <MergeRef Id="VCRedist141"/>
+      </Feature>
+
+      <!--Custom actions and execute sequences-->
+      <!-- Prevent downgrading -->
+      <!-- <CustomAction Id="PreventDowngrading" After="FindRelatedProducts" Error="Newer version already installed." />  -->
+      <!-- These properties must be set here, because we can't actually pass session data to a deferred action. -->
+      <CustomAction
+         Id="SetAdminIniCustomActionPropertyValues"
+         Property="WriteAdminIniFile"
+         Value="ADMINCONFIGFILE=[APPLICATIONFOLDER]etc\local.d\10-admins.ini;ADMINUSER=[ADMINUSER];ADMINPASSWORD=[ADMINPASSWORD]"
+         />
+      <CustomAction
+         Id="WriteAdminIniFile"
+         Return="check"
+         Execute="deferred"
+         DllEntry="WriteAdminIniFile"
+         HideTarget="yes"
+         BinaryKey="CouchIniActionDll" 
+         Impersonate="no"
+         />
+
+      <CustomAction
+         Id="SetMaybeCopyIniFilesValues"
+         Property="MaybeCopyIniFiles"
+         Value="ETCDIR=[APPLICATIONFOLDER]etc"
+         />
+      <CustomAction
+         Id="MaybeCopyIniFiles"
+         Return="check"
+         Execute="deferred"
+         DllEntry="MaybeCopyIniFiles"
+         HideTarget="yes"
+         BinaryKey="CouchIniActionDll" 
+         Impersonate="no"
+         />
+
+      <CustomAction
+         Id="SetMaybeRemoveUserConfigValues"
+         Property="MaybeRemoveUserConfig"
+         Value="ETCDIR=[APPLICATIONFOLDER]etc"
+         />
+      <CustomAction
+         Id="MaybeRemoveUserConfig"
+         Return="check"
+         Execute="deferred"
+         DllEntry="MaybeRemoveUserConfig"
+         HideTarget="yes"
+         BinaryKey="CouchIniActionDll" 
+         Impersonate="no"
+         />
+
+      <SetProperty 
+         Id="InstallCouchDBService"
+         Value="&quot;[APPLICATIONFOLDER]bin\nssm.exe&quot; install &quot;Apache CouchDB&quot; &quot;[APPLICATIONFOLDER]bin\couchdb.cmd&quot;"
+         Before="InstallCouchDBService"
+         Sequence="execute"
+         />
+      <CustomAction
+         Id="InstallCouchDBService"
+         BinaryKey="WixCA"
+         DllEntry="WixQuietExec64"
+         Execute="deferred"
+         Return="ignore"
+         Impersonate="no"
+         />
+
+      <SetProperty
+         Id="StartCouchDBService"
+         Value="&quot;[APPLICATIONFOLDER]bin\nssm.exe&quot; start &quot;Apache CouchDB&quot;"
+         Before="StartCouchDBService"
+         Sequence="execute"
+         />
+      <CustomAction
+         Id="StartCouchDBService"
+         BinaryKey="WixCA"
+         DllEntry="WixQuietExec64"
+         Execute="deferred"
+         Return="ignore"
+         Impersonate="no"
+         />
+
+      <SetProperty
+         Id="StopEPMD"
+         Value="&quot;[System64Folder]\taskkill.exe&quot; /F /IM epmd.exe"
+         Before="StopEPMD"
+         Sequence="execute"
+         />
+      <CustomAction
+         Id="StopEPMD"
+         BinaryKey="WixCA"
+         DllEntry="WixQuietExec64"
+         Execute="deferred"
+         Return="ignore"
+         Impersonate="no"
+         />
+
+      <SetProperty
+         Id="StopCouchDBService"
+         Value="&quot;[APPLICATIONFOLDER]bin\nssm.exe&quot; stop &quot;Apache CouchDB&quot;"
+         Before="StopCouchDBService"
+         Sequence="execute"
+         />
+      <CustomAction
+         Id="StopCouchDBService"
+         BinaryKey="WixCA"
+         DllEntry="WixQuietExec64"
+         Execute="deferred"
+         Return="ignore"
+         Impersonate="no"
+         />
+
+      <SetProperty
+         Id="RemoveCouchDBService"
+         Value="&quot;[APPLICATIONFOLDER]bin\nssm.exe&quot; remove &quot;Apache CouchDB&quot; confirm"
+         Before="RemoveCouchDBService"
+         Sequence="execute"
+         />
+      <CustomAction
+         Id="RemoveCouchDBService"
+         BinaryKey="WixCA"
+         DllEntry="WixQuietExec64"
+         Execute="deferred"
+         Return="ignore"
+         Impersonate="no"
+         />
+
+      <!--Custom warning: 3.x+ doesn't start without an admin! -->
+      <Property Id="ApplicationFolderName" Value="Apache CouchDB" />
+      <Property Id="IniWarningText"
+         Value="{\WixUI_Font_Emphasized}Thank you for installing Apache CouchDB!" />
+      <Property Id="ReleaseNotesLink"
+         Value="&lt;a href=&quot;https://docs.couchdb.org/en/stable/whatsnew/###RELNOTESVERSION###.html&quot;&gt;View Release Notes&lt;/a&gt;" />
+
+      <UIRef Id="CouchDBWixUI" />
+
+      <!--Installer prefs-->
+      <WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
+      <WixVariable Id="WixUIBannerBmp" Value="..\bits\couchdb-banner.bmp" />
+      <WixVariable Id="WixUIDialogBmp" Value="..\bits\couchdb-dialog.bmp" />
+      <Property Id="WIXUI_INSTALLDIR"
+         Value="APPLICATIONFOLDER" />
+      <Property Id="CA_EXCEPTION" Value="None" />
+      <Property Id="SCHEDULEREBOOT" Value="0" />
+      <InstallExecuteSequence>
+         <Custom Action="SetAdminIniCustomActionPropertyValues" After="InstallFiles">NOT Installed AND NOT REMOVE</Custom>
+         <Custom Action="WriteAdminIniFile" After="SetAdminIniCustomActionPropertyValues">NOT Installed AND NOT REMOVE</Custom>
+         <Custom Action="SetMaybeCopyIniFilesValues" After="WriteAdminIniFile">NOT Installed AND NOT REMOVE</Custom>
+         <Custom Action="MaybeCopyIniFiles" After="SetMaybeCopyIniFilesValues">NOT Installed AND NOT REMOVE</Custom>
+         <Custom Action="InstallCouchDBService" After="MaybeCopyIniFiles">INSTALLSERVICE AND NOT Installed AND NOT REMOVE</Custom>
+         <Custom Action="StartCouchDBService" After="InstallCouchDBService">INSTALLSERVICE AND NOT Installed AND NOT REMOVE</Custom>
+         <Custom Action="StopCouchDBService" After="MsiUnpublishAssemblies" >
+            Installed AND (REMOVE = "ALL")
+         </Custom>
+         <Custom Action="StopEPMD" After="StopCouchDBService" >
+            Installed AND (REMOVE = "ALL")
+         </Custom>
+         <Custom Action="RemoveCouchDBService" After="StopCouchDBService" >
+            Installed AND (REMOVE = "ALL")
+         </Custom>
+         <Custom Action="SetMaybeRemoveUserConfigValues" After="RemoveCouchDBService" >
+            Installed AND (REMOVE = "ALL")
+         </Custom>
+         <Custom Action="MaybeRemoveUserConfig" After="SetMaybeRemoveUserConfigValues" >
+            Installed AND (REMOVE = "ALL")
+         </Custom>
+      </InstallExecuteSequence>
+   </Product>
 </Wix>
 

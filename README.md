@@ -4,7 +4,7 @@ Glazier is a set of batch files, scripts and toolchains designed to
 ease building CouchDB on Windows. It's as fully automated as
 possible, with most of the effort required only once.
 
-Glazier uses the MS Visual Studio 2013 toolchain as much as possible,
+Glazier uses the MS Visual Studio 2017 toolchain as much as possible,
 to ensure a quality Windows experience and to execute all binary
 dependencies within the same runtime.
 
@@ -14,299 +14,213 @@ a consistent, repeatable build environment.
 
 # Base Requirements
 
-- 64-bit Windows 7 or 8.1. *As of CouchDB 2.0 we only support a 64-bit build of CouchDB*.
-  - We like 64-bit Windows 7, 8.1 or 10 Enterprise N (missing Media Player, etc.) from MSDN.
-- If prompted, reboot after installing the .NET framework.
-- [Visual Studio 2013 x64 Community Edition](https://www.visualstudio.com/vs/older-downloads/) installed on the *C: drive*. Downloading requires a free Dev Essentials subscription from Microsoft.
-- [Chocolatey](https://chocolatey.org). From an *administrative* __cmd.exe__ command prompt, run:
+Note that the scripts you'll run will modify your system extensively. We recommend a *dedicated build machine or VM image* for this work:
 
-```dos
-@powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
-```
+- 64-bit Windows 7+. *As of CouchDB 2.0 we only support a 64-bit build of CouchDB*.
+  - We like 64-bit Windows 10 Enterprise N (missing Media Player, etc.) from MSDN.
+  - Apply Windows Updates and reboot until no more updates appear.
+  - If using a VM, shutdown and snapshot your VM at this point.
 
-- Apply Windows Updates and reboot until no more updates appear.
-- If using a VM, shutdown and snapshot your VM at this point.
+# Install Dependencies
 
-# Install Pre-requisites
+Start an Administrative PowerShell console. Enter the following:
 
-## Clean Package Installs with Chocolatey, cyg-get and pip
-
-These packages install silently, without intervention. Cut and paste them
-into an **Administrator** command prompt.
-
-```dos
-cinst -y git 7zip.commandline StrawberryPerl nasm cyg-get wixtoolset python3 aria2 nodejs.install make
-cinst -y nssm --version 2.24.101-g897c7ad
-cinst -y -i elixir
-cyg-get p7zip autoconf binutils bison gcc-code gcc-g++ gdb git libtool make patchutils pkg-config readline file renameutils socat time tree util-linux wget
-pip install sphinx docutils pygments nose hypothesis
-```
-
-*Note: Do NOT install curl or help2man inside CygWin!*
-
-## Mozilla build
-Fetch the latest Mozilla Build version from
-https://wiki.mozilla.org/MozillaBuild and install to c:\mozilla-build
-with all defaults.
-
-## Make a new prompt shortcut
-
-Make a new shortcut on the desktop. The location should be:
-
-```dos
-cmd.exe /E:ON /V:ON /T:1F /K ""C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"" amd64 && color 1f
-```
-
-Name it "CouchDB SDK Prompt".
-
-Right-click on the icon, select Properties, click the `Advanced...`
-button, and tick the `Run as administrator` checkbox. Click OK twice.
-
-I suggest you pin it to the Start menu. We'll use this all the time.
-
-Start a CouchDB SDK Prompt window and run 
-`where cl mc mt link lc rc nmake make`. Make sure the output matches the
-following:
-
-```dos
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64\cl.exe
-C:\Program Files (x86)\Windows Kits\8.1\bin\x64\mc.exe
-C:\Program Files (x86)\Windows Kits\8.1\bin\x86\mc.exe
-C:\Program Files (x86)\Windows Kits\8.1\bin\x64\mt.exe
-C:\Program Files (x86)\Windows Kits\8.1\bin\x86\mt.exe
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64\link.exe
-C:\tools\cygwin\bin\link.exe
-C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools\x64\lc.exe
-C:\Program Files (x86)\Windows Kits\8.1\bin\x64\rc.exe
-C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64\nmake.exe
-C:\ProgramData\chocolatey\bin\make.exe
-C:\tools\cygwin\bin\make.exe
-```
-
-Stop here if your results are not *identical*. If you are unable to
-reproduce these results, please open an issue on this repository for
-assistance.
-
-## Set up required convenience links & environment variable
-
-In the CouchDB SDK Prompt, run the following commands:
-
-```dos
-mkdir c:\relax    
-cd c:\relax
-rd /s/q SDK VC nasm inno5 nsis strawberry
-mklink /j c:\relax\bin c:\relax\glazier\bin
-mklink /j c:\relax\nasm "c:\Program Files (x86)\NASM"
-mklink /j c:\relax\SDK "c:\Program Files (x86)\Windows Kits\8.1"
-mklink /j c:\relax\VC "C:\Program Files (x86)\Microsoft Visual Studio 12.0"
-mklink /j c:\openssl c:\relax\openssl
-setx RELAX c:\relax
-```
-
-Close all open command prompts. Now we're ready to go!
-
-# Building CouchDB Pre-requisites
-
-## Downloading glazier and dependency sources
-
-Open a new `CouchDB SDK Prompt` and run the following:
-
-```dos
-cd c:\relax
-git config --global core.autocrlf input
+```powershell
+mkdir C:\Relax\
+cd C:\Relax\
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+choco feature enable -n allowGlobalConfirmation
+choco install git
 git clone https://github.com/apache/couchdb-glazier
-c:\relax\bin\aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt
-color 1f
+&.\couchdb-glazier\bin\install_dependencies.ps1
 ```
 
-As of 2017-07-08, this will download the source for the following versions of our dependencies:
+You should go get lunch. The last step will take over an hour, even on a speedy Internet connection.
 
-* MS Visual C++ x64 Redistributable for VC12 with patches
-* OpenSSL 1.0.2l
-* curl 7.49.1
-* Erlang:
-  * 17.5
-  * 18.3
-  * 19.3
-* ICU4C 57.1 (*Note*: this is the last version to support building in VS2013)
-* SpiderMonkey 1.8.5
+At this point, you should have the following installed:
 
+* Visual Studio 2017 (Build Tools, Visual C++ workload, native desktop workload)
+* Windows 10 SDK (10.1)
+* NodeJS (LTS version)
+* wget.exe
+* NASM
+* Cyg-get (for cygwin)
+* WiX Toolset
+* Python 3
+  * Python packages sphinx, docutils, pygments, nose, hypothesis, and `sphinx_rtd_theme`
+* GNU Make
+* NSSM
+* GPG4Win (for signing releases)
+* checksum
+* archiver
+* Dependency Walker
+* unzip
+* NSIS
+* NuGet
+* VSSetup
+* MozillaBuild setup (3.3)
+* VCPkg (https://github.com/Microsoft/vcpkg), which built and installed:
+  * OpenSSL (at time of writing, 1.1.1)
+  * ICU (at time of writing, 61)
+  * libcurl (at time of writing, 7.68.0)
+* Cygwin (used for building Erlang), plus some packages required for Erlang builds
 
-## Build & Test 64-bit OpenSSL
+# Building Erlang
 
-In the same `CouchDB SDK Prompt`, run the following:
+This section is not presently automated because it requires switching between PowerShell
+and Cygwin. It should be possible to automate (PRs welcome!)
 
-```dos
-cd %RELAX%\bin && build_openssl.cmd
+We generally need to build a version of Erlang that is not distributed directly
+by Ericsson. This may be because we require patches that are released after the
+binaries are built.
+
+For CouchDB 3.0, we build against Erlang 20.3.8.25.
+
+In the same PowerShell session, enter the following:
+
+```powershell
+cd c:\relax
+git clone https://github.com/erlang/otp
+cd otp
+git checkout OTP-20.3.8.25
+cygwin
+export PATH="/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64:/cygdrive/c/Program Files (x86)/NSIS:$PATH"
+which cl link mc lc mt nmake rc
 ```
 
-Close your `CouchDB SDK Prompt`.
+This should produce the following output:
 
-## Build 64-bit libcurl
-
-Open a new `CouchDB SDK Prompt` and run the following:
-
-```dos
-cd %RELAX%\bin && build_curl.cmd
+```
+/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/cl
+/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/link
+/cygdrive/c/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0/x64/mc
+/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lc
+/cygdrive/c/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0/x64/mt
+/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/nmake
+/cygdrive/c/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0/x64/rc
 ```
 
-## Build 64-bit ICU
+Continue by entering the following. This takes a while, maybe 30-60 minutes at the `otp_build` steps, so be sure to have your favourite beverage on hand while you watch.
 
-In the same `CouchDB SDK Prompt` run the following:
-
-```dos
-cd %RELAX%\bin && build_icu.cmd
 ```
-
-Close the window.
-
-## Start a UNIX-friendly shell with MS compilers
-
-1. Start your `CouchDB SDK Prompt` as above
-2. Launch a cygwin erl-ified shell via `c:\relax\bin\shell.cmd`
-3. Select 18.3 (unless you know what you are doing!)
-4. Select `b for bash prompt`.
-
-For more detail on why this is necessary, see
-[UNIX-friendly shell details](#unix-friendly-shell-details) below.
-
-## Unpack, configure and build Erlang/OTP 18.3
-
-At the bash prompt, enter the following commands:
-
-```bash
-ln -s /cygdrive/c/relax /relax
-cd .. && tar xzf /relax/bits/otp_src_18.3.tar.gz
-cd $ERL_TOP
-echo "skipping gs" > lib/gs/SKIP
-echo "skipping wx" > lib/wx/SKIP
-echo "skipping ic" > lib/ic/SKIP
-echo "skipping jinterface" > lib/jinterface/SKIP
-eval `$ERL_TOP/otp_build env_win32 x64`
-```
-
-At this point, check your paths. Run `which cl link mc lc mt nmake rc`.
-The output should match the following:
-
-```bash
-/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN/amd64/cl
-/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN/amd64/link
-/cygdrive/c/PROGRA~2/WI3CF2~1/8.1/bin/x64/mc
-/cygdrive/c/PROGRA~2/MICROS~1/Windows/v8.1A/bin/NETFX4~1.1TO/x64/lc
-/cygdrive/c/PROGRA~2/WI3CF2~1/8.1/bin/x64/mt
-/cygdrive/c/PROGRA~2/MICROS~1.0/VC/BIN/amd64/nmake
-/cygdrive/c/PROGRA~2/WI3CF2~1/8.1/bin/x64/rc
-```
-
-If it does not, stop and diagnose.
-
-Now you can proceed to build Erlang, closing the window when
-done:
-
-```bash
-erl_config.sh
-# Ensure OpenSSL is found by the configure script.
-# If you see any warnings, stop and diagnose.
-erl_build.sh
-exit
+cd /cygdrive/c/relax/otp
+eval `./otp_build env_win32 x64`
+./otp_build autoconf 2>&1 | tee build_autoconf.txt
+./otp_build configure --with-ssl=/cygdrive/c/relax/vcpkg/installed/x64-windows --without-javac --without-debugger --without-wx --without-ic --without-odbc --without-et --without-cosEvent --without-cosEventDomain --without-cosFileTransfer --without-cosNotification --without-cosProperty --without-cosTime --without-cosTransactions --without-orber --without-observer 2>&1 | tee build_configure.txt
+./otp_build boot -a  2>&1 | tee build_boot.txt
+./otp_build release -a  2>&1 | tee build_release.txt
+./otp_build installer_win32  2>&1 | tee build_installer_win32.txt
+release/win32/otp_win64_*.exe /S
 exit
 ```
 
-## Build Spidermonkey JavaScript 1.8.5
+You now have a full install of Erlang on your system.
 
-Spidermonkey needs to be compiled with the Mozilla Build chain.
-To build it with VS2013 requires a few patches contained in this
-repository.
+# Installing Elixir
 
-Start by launching a fresh `CouchDB SDK prompt`, then setup the
-Mozilla build environment with the command:
+CouchDB uses Elixir for tests. If you intend to run the test suite (you should!), install
+Elixir now by running the following in the same PowerShell prompt:
 
-```dos
-call c:\mozilla-build\start-shell-msvc2013-x64.bat
+```
+wget.exe https://github.com/elixir-lang/elixir/releases/download/v1.9.4/Precompiled.zip
+arc unarchive .\Precompiled.zip
+copy .\Precompiled\* 'C:\Program Files\erl9.3.3.14\' -Recurse  -Force
+del Precompiled -Recurse
+del Precompiled.zip
 ```
 
-Now, ensure the output of `which cl lc link mt rc make` matches
-the following:
+# Building SpiderMonkey
 
-```dos
-/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64/cl.exe
-/c/Program Files (x86)/Microsoft SDKs/Windows/v8.1A/bin/NETFX 4.5.1 Tools/x64/lc.exe
-gram Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64/link.exe
-/c/Program Files (x86)/Windows Kits/8.1/bin/x64/mt.exe
-/c/Program Files (x86)/Windows Kits/8.1/bin/x64/rc.exe
-/local/bin/make.exe
+This section is not currently automated, due to the need for Mozilla's separate build
+environment. It should be possible to automate (PRs welcome!)
+
+From the same PowerShell prompt, enter the following:
+
+```
+C:\mozilla-build\start-shell.bat
 ```
 
-If this does not match *exactly*, stop and diagnose.
+At the MozillaBuild prompt, enter the following:
 
-Now, proceed to patch and build SpiderMonkey 1.8.5:
-
-```bash
+```
+C:\mozilla-build\start-shell.bat
 cd /c/relax
-tar xzf bits/js185-1.0.0.tar.gz
-patch -p0 </c/relax/couchdb-glazier/bits/js185-msvc2013.patch
-cd js-1.8.5/js/src
+git clone https://github.com/mozilla/gecko-dev
+cd gecko-dev
+git checkout esr60
+cd js/src
+sed -i -E "s/(VC\.Tools\.x86\.x64')/\1, '-products', '*'/g" ../../build/moz.configure/toolchain.configure
 autoconf-2.13
-./configure --enable-static --enable-shared-js --disable-debug-symbols --disable-debug --disable-debugger-info-modules --target=x86_64-pc-mingw32 --host=x86_64-pc-mingw32
-make
+mkdir build_OPT.OBJ
+cd build_OPT.OBJ
+../configure --disable-ctypes --disable-ion --disable-jemalloc --enable-optimize --enable-hardening --with-intl-api --build-backends=RecursiveMake --with-visual-studio-version=2017 --with-system-icu --disable-debug --enable-gczeal --target=x86_64-pc-mingw32 --host=x86_64-pc-mingw32 --prefix=/c/relax/vcpkg/installed/x64-windows
+mozmake
+exit
 ```
 
-If desired, tests can be run at this point. This is optional,
-takes a while, and the math-jit-tests may fail. For more detail
-as to why, see https://bugzilla.mozilla.org/show_bug.cgi?id=1076670
-Also, one jsapi test has been disabled that crashes; this exercises
-a call CouchDB doesn't use.
+The `sed` command adds support for building with just the VS Build Tools, which are
+sufficient for just SpiderMonkey. (Otherwise, you need to download an additional 9GB of
+Visual Studio. Bleah.) The build should take about 15 minutes.
+
+Back in PowerShell, copy the binaries to where our build process expects them:
+
+```
+copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\js\src\build\*.pdb C:\relax\vcpkg\installed\x64-windows\bin
+copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\dist\bin\*.dll C:\relax\vcpkg\installed\x64-windows\bin
+copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\dist\include\* C:\relax\vcpkg\installed\x64-windows\include -Recurse -ErrorAction SilentlyContinue
+```
+
+# Building CouchDB itself
+
+You're finally ready. You should snapshot your VM at this point!
+
+Open a new PowerShell window. Set up your shell correctly (this step works if you've
+closed your PowerShell window before any of the previous steps, too):
+
+```
+&c:\relax\couchdb-glazier\bin\shell.ps1
+```
+
+Then, start the process:
+
+```
+cd c:\relax
+git clone https://github.com/apache/couchdb
+cd couchdb
+git checkout <tag or branch of interest goes here>
+&.\configure.ps1 -WithCurl -SpiderMonkeyVersion 60
+make -f Makefile.win
+```
+
+You now have built CouchDB!
 
 To run the tests:
 
-```bash
-make check
+```
+make -f Makefile.win check
 ```
 
-Close the prompt window by entering `exit` twice.
+Finally, to build a CouchDB installer:
 
-## Building CouchDB itself
-
-Start a new `SDK prompt`, then run `c:\relax\bin\shell.cmd`.
-Select `Erlang 18.3` and `w for a Windows prompt`.
-Then, run the following commands to download and build CouchDB
-from the master repository:
-
-```dos
-cd \relax && git clone https://github.com/apache/couchdb
-cd couchdb
-# optionally, switch to a different tag or branch for building with:
-# git checkout --track origin/2.0.x
-git clean -fdx && git reset --hard
-powershell -ExecutionPolicy Bypass .\configure.ps1 -WithCurl
-make check
+```
+make -f Makefile.win release
+cd c:\relax
+&couchdb-glazier\bin\build_installer.ps1
 ```
 
-This will build a development version of CouchDB runnable via
-
-```dos
-dev\run <-n1> <--with-admin-party-please>
-```
-
-To build a self-contained CouchDB installation (also known as an Erlang
-_release_), after running the above use:
-
-```dos
-    make release
-```
-
-To build an installer using WiX to create a full Windows .msi, run:
-
-```dos
-    make release
-    cd \relax\glazier
-    bin\build_installer.cmd
-```
+The installer will be placed in your current working directory.
 
 You made it! Time to relax. :D
 
-# Appendix
+If you're a release engineer, you may find the following commands useful too:
+
+```
+checksum -t sha256 apache-couchdb.#.#.#-RC#.tar.gz
+checksum -t sha512 apache-couchdb.#.#.#-RC#.tar.gz
+gpg --verify apache-couchdb.#.#.#-RC#.tar.gz.asc
+```
+
+# Appendices
 
 ## Why Glazier?
 
@@ -330,19 +244,10 @@ Our goal is to get the path set up in this order:
 3. cygwin path for other build tools like make, autoconf, libtool
 4. the remaining windows system path
 
-It seems this is a challenge for most environments, so `glazier` just
-assumes you're using [chocolatey] and takes care of the rest.
+It seems this is a challenge for most environments, so `glazier` gets this all right for
+you by running the MSVC environment, then tacking on the things Erlang expects at the end
+of the path.
 
-Alternatively, you can launch your own cmd prompt, and ensure that your system
-path is correct first in the win32 side before starting cygwin. Once in cygwin
-go to the root of where you installed erlang, and run the Erlang/OTP script:
-
-        eval `./otp_build env_win32 x64`
-        echo $PATH | /bin/sed 's/:/\n/g'
-        which cl link mc lc mt nmake rc
-
-Confirm that output of `which` returns only MS versions from VC++ or the SDK.
-This is critical and if not correct will cause confusing errors much later on.
 Overall, the desired order for your $PATH is:
 
 - Erlang build helper scripts
@@ -354,3 +259,33 @@ Overall, the desired order for your $PATH is:
 - Various settings form the `otp_build` script
 
 More details are at [erlang INSTALL-Win32.md on github](https://github.com/erlang/otp/blob/master/HOWTO/INSTALL-WIN32.md)
+
+## Windows silent installs
+
+Here are some sample commands, supporting the new features of the 3.0 installer.
+
+Install CouchDB without a service, but with an admin user:password of `admin:hunter2`:
+
+```
+msiexec /i apache-couchdb-3.0.0.msi /quiet ADMINUSER=admin ADMINPASSWORD=hunter2 /norestart
+```
+
+The same as above, but also install and launch CouchDB as a service:
+
+```
+msiexec /i apache-couchdb-3.0.0.msi /quiet INSTALLSERVICE=1 ADMINUSER=admin ADMINPASSWORD=hunter2 /norestart
+```
+
+Unattended uninstall of CouchDB:
+
+```
+msiexec /x apache-couchdb-3.0.0.msi /quiet /norestart
+```
+
+Unattended uninstall if the installer file is unavailable:
+
+```
+msiexec /x {4CD776E0-FADF-4831-AF56-E80E39F34CFC} /quiet /norestart
+```
+
+Add `/l* log.txt` to any of the above to generate a useful logfile for debugging.

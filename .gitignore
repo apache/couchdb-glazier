@@ -1,4 +1,5 @@
 *.swp
+*.dll
 release/*
 bits/*.gz
 bits/*.exe
@@ -10,11 +11,15 @@ bits/ftp*
 bits/*.iso
 bits/*.7z
 bits/a2session.txt
+installer/CustomAction/obj
+installer/CustomAction/Microsoft.Deployment.WindowsInstaller.xml
 /.project
 *~
+*.swp
 *.wixobj
 *.wixpdb
 *.msi
+*.pdb
 installer/couchdb.wxs
 installer/couchdbfiles.wxs
 build_*.txt

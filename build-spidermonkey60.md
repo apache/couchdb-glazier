@@ -1,3 +1,7 @@
+# Note
+
+The following research was instrumental in building SpiderMonkey 60 on Windows. Big thanks to Peng Hui Jiang for this research.
+
 ##Build Environment
 
 Below is environment we are using and we can check whether it is working on Windows 7/8 and Visual Studio 2013/2015 etc.
@@ -195,6 +199,8 @@ c:/mozjs-60.1.1pre3/js/src/vm/Time.cpp(30): fatal error C1083: Cannot open inclu
 
 Note: we might have to create some patches for `mozjs-60.1.1pre3` windows version. Now just commented out these.
 
+[Update: bugzilla says that Windows builds using NSPR Posix emulation are unsupported, so for CouchDB 3.0 we're just building with NSPR enabled. It builds just fine. None of the problems in the point below occur.]
+
 ### Failed to build nspr
 
 ```
@@ -235,6 +241,8 @@ ERROR: Found SDK version 10.0.18362.0 but clang-cl builds currently don't work w
 ```
 
 Note: we might get above error when running configure. Need to use proper window SDK.
+
+[Update: Seems resolved with MozillaBuild 3.3.]
 
 ### Windows Universal CRT SDK
 
