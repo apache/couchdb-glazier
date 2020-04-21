@@ -10,6 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+# requires English language pack installed
 choco install visualstudio2017buildtools "--passive --locale en-US"
 choco install visualstudio2017-workload-vctools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.ATLMFC"
 choco install visualstudio2017-workload-nativedesktop
@@ -22,9 +23,9 @@ pip install --upgrade sphinx docutils pygments nose hypothesis sphinx_rtd_theme
 cyg-get -upgrade p7zip autoconf binutils bison gcc-code gcc-g++ gdb git libtool make patchutils pkg-config readline file renameutils socat time tree util-linux wget
 
 wget.exe https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-3.3.exe
-.\MozillaBuildSetup-Latest.exe /S
+.\MozillaBuildSetup-3.3.exe /S
 sleep 120
-del MozillaBuildSetup-Latest.exe
+del MozillaBuildSetup-3.3.exe
 
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
@@ -39,6 +40,6 @@ cd ..
 
 New-Item -Path C:\relax\vcpkg\installed\x64-windows\lib\libeay32.lib -ItemType HardLink -Value C:\relax\vcpkg\installed\x64-windows\lib\libcrypto.lib
 New-Item -Path C:\relax\vcpkg\installed\x64-windows\lib\ssleay32.lib -ItemType HardLink -Value C:\relax\vcpkg\installed\x64-windows\lib\libssl.lib
-New-Item -Path relax\vcpkg\installed\x64-windows\lib\VC -ItemType SymbolicLink -Value relax\vcpkg\installed\x64-windows\lib
+New-Item -Path C:\relax\vcpkg\installed\x64-windows\lib\VC -ItemType SymbolicLink -Value C:\relax\vcpkg\installed\x64-windows\lib
 
 . ${PSScriptRoot}\shell.ps1
