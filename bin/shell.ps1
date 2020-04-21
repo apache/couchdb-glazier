@@ -10,7 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-$installationPath = vswhere.exe -prerelease -products Microsoft.VisualStudio.Product.BuildTools -version '[15.0,16.0)' -property InstallationPath
+$installationPath = & vswhere.exe -prerelease -products Microsoft.VisualStudio.Product.BuildTools -version '[15.0,16.0)' -property InstallationPath
 if ($installationPath -and (test-path "$installationPath\Common7\Tools\vsdevcmd.bat")) {
   & "${env:COMSPEC}" /s /c "`"$installationPath\Common7\Tools\vsdevcmd.bat`" -arch=amd64 -no_logo && set" | foreach-object {
     $name, $value = $_ -split '=', 2
