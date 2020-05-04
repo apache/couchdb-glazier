@@ -1,0 +1,2 @@
+ac_add_options --enable-application=js
+ac_add_options --disable-ctypes --disable-ion --disable-jemalloc --enable-optimize --enable-hardening --with-intl-api --build-backends=RecursiveMake --with-visual-studio-version=2017 --disable-debug --enable-gczeal --target=x86_64-pc-mingw32 --host=x86_64-pc-mingw32 --prefix=/c/relax/vcpkg/installed/x64-windows

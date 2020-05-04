@@ -14,7 +14,7 @@
 choco install visualstudio2017buildtools "--passive --locale en-US"
 choco install visualstudio2017-workload-vctools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.ATLMFC"
 choco install visualstudio2017-workload-nativedesktop
-choco install windows-sdk-10.1 nodejs-lts wget nasm cyg-get wixtoolset python3 make nssm gpg4win checksum archiver dependencywalker unzip
+choco install windows-sdk-10.1 nodejs-lts wget nasm cyg-get wixtoolset python3 make nssm gpg4win checksum archiver dependencywalker unzip vcpython27
 choco install nsis --version=2.51
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module VSSetup -Scope CurrentUser -Force
@@ -31,7 +31,7 @@ git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 .\bootstrap-vcpkg.bat -disableMetrics -win64
 .\vcpkg integrate install --triplet x64-windows
-.\vcpkg remove openssl icu curl[openssl,tool]
+.\vcpkg remove openssl icu curl[openssl,tool] --triplet x64-windows
 .\vcpkg install openssl icu curl[openssl,tool] --triplet x64-windows
 cd ..
 

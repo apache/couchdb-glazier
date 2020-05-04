@@ -143,31 +143,79 @@ C:\mozilla-build\start-shell.bat
 At the MozillaBuild prompt, enter the following:
 
 ```
-C:\mozilla-build\start-shell.bat
 cd /c/relax
 git clone https://github.com/mozilla/gecko-dev
 cd gecko-dev
-git checkout esr60
-cd js/src
-sed -i -E "s/(VC\.Tools\.x86\.x64')/\1, '-products', '*'/g" ../../build/moz.configure/toolchain.configure
-autoconf-2.13
-mkdir build_OPT.OBJ
-cd build_OPT.OBJ
-../configure --disable-ctypes --disable-ion --disable-jemalloc --enable-optimize --enable-hardening --with-intl-api --build-backends=RecursiveMake --with-visual-studio-version=2017 --with-system-icu --disable-debug --enable-gczeal --target=x86_64-pc-mingw32 --host=x86_64-pc-mingw32 --prefix=/c/relax/vcpkg/installed/x64-windows
-mozmake
-exit
+git checkout esr68
+sed -i -E "s/(VC\.Tools\.x86\.x64')/\1, '-products', '*'/g" build/moz.configure/toolchain.configure
+git cherry-pick b444ca8
+export MOZCONFIG=/c/relax/couchdb-glazier/sm-opt.mozconfig
+./mach bootstrap
 ```
 
 The `sed` command adds support for building with just the VS Build Tools, which are
-sufficient for just SpiderMonkey. (Otherwise, you need to download an additional 9GB of
-Visual Studio. Bleah.) The build should take about 15 minutes.
+sufficient for just SpiderMonkey. And the `git cherry-pick` pulls in a patch to fix
+building against newer versions of Rust.
 
-Back in PowerShell, copy the binaries to where our build process expects them:
+
+This will prompt you a few times. Be sure to answer that you want to build:
+
+* `2. Firefox for Desktop` (NOT the Artifact Mode)
+* `n` to _"Would you like to run a few configuration steps to ensure Git is..."_
+* `n` to _"Would you like to enable build system telemetry?"_
+
+Then, exit the shell (as instructed) and start a new PowerShell. In that PowerShell:
 
 ```
-copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\js\src\build\*.pdb C:\relax\vcpkg\installed\x64-windows\bin
-copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\dist\bin\*.dll C:\relax\vcpkg\installed\x64-windows\bin
-copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\dist\include\* C:\relax\vcpkg\installed\x64-windows\include -Recurse -ErrorAction SilentlyContinue
+&c:\relax\couchdb-glazier\bin\shell.ps1
+C:\mozilla-build\start-shell.bat
+cd /c/relax/gecko-dev
+export MOZCONFIG=/c/relax/couchdb-glazier/sm-opt.mozconfig
+./mach build
+exit
+```
+
+The build should take about 15 minutes. It may show an error at the end similar to this - it's
+just a test failure and can **safely be ignored**:
+
+```
+17:44.29 js/src/build/spidermonkey_checks.stub
+17:51.15 Traceback (most recent call last):
+17:51.15   File "c:/relax/gecko-dev/config/check_spidermonkey_style.py", line 799, in <module>
+17:51.15     main()
+17:51.15   File "c:/relax/gecko-dev/config/check_spidermonkey_style.py", line 782, in main
+17:51.15     ok = check_style(fixup)
+17:51.15   File "c:/relax/gecko-dev/config/check_spidermonkey_style.py", line 316, in check_style
+17:51.15     code = read_file(f)
+17:51.15   File "c:/relax/gecko-dev/config/check_spidermonkey_style.py", line 621, in read_file
+17:51.15     raise ValueError("unmatched #if")
+17:51.15 ValueError: unmatched #if
+17:51.17 Traceback (most recent call last):
+17:51.17   File "c:\mozilla-build\python\Lib\runpy.py", line 174, in _run_module_as_main
+17:51.17     "__main__", fname, loader, pkg_name)
+17:51.17   File "c:\mozilla-build\python\Lib\runpy.py", line 72, in _run_code
+17:51.17     exec code in run_globals
+17:51.17   File "c:\relax\gecko-dev\python\mozbuild\mozbuild\action\file_generate.py", line 120, in <module>
+17:51.17     sys.exit(main(sys.argv[1:]))
+17:51.17   File "c:\relax\gecko-dev\python\mozbuild\mozbuild\action\file_generate.py", line 71, in main
+17:51.17     ret = module.__dict__[method](output, *args.additional_arguments, **kwargs)
+17:51.17   File "c:/relax/gecko-dev/config/run_spidermonkey_checks.py", line 15, in main
+17:51.17     raise Exception(script + " failed")
+17:51.17 Exception: c:/relax/gecko-dev/config/check_spidermonkey_style.py failed
+17:51.17 mozmake.EXE[4]: *** [backend.mk;11: .deps/spidermonkey_checks.stub] Error 1
+17:51.17 mozmake.EXE[3]: *** [c:/relax/gecko-dev/config/recurse.mk;101: js/src/build/misc] Error 2
+17:51.17 mozmake.EXE[2]: *** [c:/relax/gecko-dev/config/recurse.mk;34: misc] Error 2
+17:51.17 mozmake.EXE[1]: *** [c:/relax/gecko-dev/config/rules.mk;413: default] Error 2
+17:51.17 mozmake.EXE: *** [client.mk;125: build] Error 2
+```
+
+Back in the PowerShell, copy the binaries to where our build process expects them:
+
+```
+copy C:\relax\gecko-dev\obj-x86_64-pc-mingw32\js\src\build\*.pdb C:\relax\vcpkg\installed\x64-windows\bin
+copy C:\relax\gecko-dev\obj-x86_64-pc-mingw32\dist\bin\*.dll C:\relax\vcpkg\installed\x64-windows\bin
+copy C:\relax\gecko-dev\obj-x86_64-pc-mingw32\dist\bin\js.exe C:\relax\vcpkg\installed\x64-windows\bin\js68.exe
+copy C:\relax\gecko-dev\obj-x86_64-pc-mingw32\dist\include\* C:\relax\vcpkg\installed\x64-windows\include -Recurse -ErrorAction SilentlyContinue
 ```
 
 # Building CouchDB itself
@@ -188,7 +236,7 @@ cd c:\relax
 git clone https://github.com/apache/couchdb
 cd couchdb
 git checkout <tag or branch of interest goes here>
-&.\configure.ps1 -WithCurl -SpiderMonkeyVersion 60
+&.\configure.ps1 -WithCurl -SpiderMonkeyVersion 68
 make -f Makefile.win
 ```
 
