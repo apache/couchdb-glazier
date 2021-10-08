@@ -62,7 +62,6 @@ At this point, you should have the following installed:
 * VCPkg (https://github.com/Microsoft/vcpkg), which built and installed:
   * OpenSSL (at time of writing, 1.1.1)
   * ICU (at time of writing, 61)
-  * libcurl (at time of writing, 7.68.0)
 * Cygwin (used for building Erlang), plus some packages required for Erlang builds
 
 # Building Erlang
@@ -188,7 +187,7 @@ cd c:\relax
 git clone https://github.com/apache/couchdb
 cd couchdb
 git checkout <tag or branch of interest goes here>
-&.\configure.ps1 -WithCurl -SpiderMonkeyVersion 60
+&.\configure.ps1 -SpiderMonkeyVersion 60
 make -f Makefile.win
 ```
 
