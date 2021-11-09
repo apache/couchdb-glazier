@@ -103,8 +103,6 @@ Continue by entering the following. This takes a while, maybe 30-60 minutes at t
 
 ```
 cd /cygdrive/c/relax/otp
-export CFLAGS="-link -LIBPATH:/cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/lib/x64
-/"
 eval `./otp_build env_win32 x64`
 ./otp_build autoconf 2>&1 | tee build_autoconf.txt
 ./otp_build configure --with-ssl=/cygdrive/c/relax/vcpkg/installed/x64-windows --without-javac --without-debugger --without-wx --without-ic --without-odbc --without-et --without-cosEvent --without-cosEventDomain --without-cosFileTransfer --without-cosNotification --without-cosProperty --without-cosTime --without-cosTransactions --without-orber --without-observer 2>&1 | tee build_configure.txt
