@@ -83,7 +83,7 @@ git clone https://github.com/erlang/otp
 cd otp
 git checkout OTP-20.3.8.25
 cygwin
-export PATH="/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64:/cygdrive/c/Program Files (x86)/NSIS:$PATH"
+export PATH="/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64:/cygdrive/c/Program Files (x86)/NSIS:/cygdrive/c/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0/x64:$PATH"
 which cl link mc lc mt nmake rc
 ```
 
