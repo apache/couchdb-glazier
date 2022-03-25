@@ -4,13 +4,12 @@ Glazier is a set of batch files, scripts and toolchains designed to
 ease building CouchDB on Windows. It's as fully automated as
 possible, with most of the effort required only once.
 
-Glazier uses the MS Visual Studio 2017 toolchain as much as possible,
+Glazier uses the MS Visual Studio 2022 toolchain as much as possible,
 to ensure a quality Windows experience and to execute all binary
 dependencies within the same runtime.
 
 We hope Glazier simplifies using Erlang and CouchDB for you, giving
 a consistent, repeatable build environment.
-
 
 # Base Requirements
 
@@ -26,11 +25,12 @@ Note that the scripts you'll run will modify your system extensively. We recomme
 Start an Administrative PowerShell console. Enter the following:
 
 ```powershell
-mkdir C:\Relax\
-cd C:\Relax\
+mkdir C:\relax\
+cd C:\relax\
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n allowGlobalConfirmation
 choco install git
+git config --global auto.crlf false 
 git clone https://github.com/apache/couchdb-glazier
 &.\couchdb-glazier\bin\install_dependencies.ps1
 ```
@@ -39,30 +39,20 @@ You should go get lunch. The last step will take over an hour, even on a speedy 
 
 At this point, you should have the following installed:
 
-* Visual Studio 2017 (Build Tools, Visual C++ workload, native desktop workload)
-* Windows 10 SDK (10.1)
+* Visual Studio 2022 (Build Tools, Visual C++ workload, native desktop workload)
+* Windows 10 SDK (by native desktop workload; 10.0.19041.0)
 * NodeJS (LTS version)
-* wget.exe
-* NASM
-* Cyg-get (for cygwin)
 * WiX Toolset
 * Python 3
-  * Python packages sphinx, docutils, pygments, nose, hypothesis, and `sphinx_rtd_theme`
-* GNU Make
+  * Python packages sphinx, sphinx_rtd_theme and pygments
 * NSSM
-* GPG4Win (for signing releases)
-* checksum
-* archiver
-* Dependency Walker
-* unzip
-* NSIS
+* Make
 * NuGet
 * VSSetup
-* MozillaBuild setup (3.3)
+* VSWhere
+* MozillaBuild setup
 * VCPkg (https://github.com/Microsoft/vcpkg), which built and installed:
-  * OpenSSL (at time of writing, 1.1.1)
-  * ICU (at time of writing, 61)
-* Cygwin (used for building Erlang), plus some packages required for Erlang builds
+  * ICU (at time of writing, 69.1)
 
 # Building Erlang
 
@@ -131,42 +121,47 @@ del Precompiled.zip
 # Building SpiderMonkey
 
 This section is not currently automated, due to the need for Mozilla's separate build
-environment. It should be possible to automate (PRs welcome!)
+environment. It should be possible to automate (PRs welcome!). At time of writing, we
+use the `esr91` branch of spidermonkey.
 
 From the same PowerShell prompt, enter the following:
 
-```
+```powershell
 C:\mozilla-build\start-shell.bat
 ```
 
 At the MozillaBuild prompt, enter the following:
 
-```
-C:\mozilla-build\start-shell.bat
+```bash
 cd /c/relax
 git clone https://github.com/mozilla/gecko-dev
 cd gecko-dev
-git checkout esr60
-cd js/src
-sed -i -E "s/(VC\.Tools\.x86\.x64')/\1, '-products', '*'/g" ../../build/moz.configure/toolchain.configure
-autoconf-2.13
-mkdir build_OPT.OBJ
-cd build_OPT.OBJ
-../configure --disable-ctypes --disable-ion --disable-jemalloc --enable-optimize --enable-hardening --with-intl-api --build-backends=RecursiveMake --with-visual-studio-version=2017 --with-system-icu --disable-debug --enable-gczeal --target=x86_64-pc-mingw32 --host=x86_64-pc-mingw32 --prefix=/c/relax/vcpkg/installed/x64-windows
-mozmake
+git checkout esr91
+./mach bootstrap --application-choice js
+```
+
+Please answer the following question of `./mach boostrap`. You need this only for the first run.
+It downloads a complete build toolchain for Spidermonkey.
+
+* Would you like to create this directory? (Yn): Y
+* Would you like to run a few configuration steps to ensure Git is optimally configured? (Yn): Y
+* Will you be submitting commits to Mozilla? (Yn): n
+* Would you like to enable build system telemetry? (Yn):n
+
+
+```bash
+export MOZCONFIG=/c/relax/couchdb-glazier/moz/sm-opt
+./mach build
 exit
 ```
-
-The `sed` command adds support for building with just the VS Build Tools, which are
-sufficient for just SpiderMonkey. (Otherwise, you need to download an additional 9GB of
-Visual Studio. Bleah.) The build should take about 15 minutes.
-
+Now you should have built Spidermonkey.
 Back in PowerShell, copy the binaries to where our build process expects them:
 
-```
-copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\js\src\build\*.pdb C:\relax\vcpkg\installed\x64-windows\bin
-copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\dist\bin\*.dll C:\relax\vcpkg\installed\x64-windows\bin
-copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\dist\include\* C:\relax\vcpkg\installed\x64-windows\include -Recurse -ErrorAction SilentlyContinue
+```powershell
+copy C:\relax\gecko-dev\sm-obj-opt\js\src\build\*.pdb C:\relax\vcpkg\installed\x64-windows\bin
+copy C:\relax\gecko-dev\sm-obj-opt\js\src\build\*.lib C:\relax\vcpkg\installed\x64-windows\lib
+copy C:\relax\gecko-dev\sm-obj-opt\dist\bin\*.dll C:\relax\vcpkg\installed\x64-windows\bin
+copy C:\relax\gecko-dev\sm-obj-opt\dist\include\* C:\relax\vcpkg\installed\x64-windows\include -Recurse -ErrorAction SilentlyContinue
 ```
 
 # Building CouchDB itself

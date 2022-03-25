@@ -10,36 +10,53 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-# requires English language pack installed
-choco install visualstudio2017buildtools "--passive --locale en-US"
-choco install visualstudio2017-workload-vctools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.ATLMFC"
-choco install visualstudio2017-workload-nativedesktop
-choco install windows-sdk-10.1 nodejs-lts wget nasm cyg-get wixtoolset python3 make nssm gpg4win checksum archiver dependencywalker unzip
-choco install nsis --version=2.51
+# Sourcing variable definitions
+. ${PSScriptRoot}\variables.ps1
+
+# Exclude c:\relax from MS defender to speed up things
+Add-MpPreference -ExclusionPath "C:\relax"
+
+# Install build tools - requires English language pack installed
+choco install visualstudio2022buildtools "--passive --locale en-US"
+choco install visualstudio2022-workload-vctools --package-parameters "--add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.VC.Redist.MSM"
+#choco install visualstudio2022-workload-nativedesktop
+choco install nodejs-lts wixtoolset make nssm python3 vswhere
+#choco install windows-sdk-10.1 nodejs-lts wget nasm cyg-get wixtoolset python3 make nssm gpg4win checksum archiver dependencywalker unzip
+#choco install nsis --version=2.51
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module VSSetup -Scope CurrentUser -Force
 python -m pip install --upgrade pip
-pip install --upgrade sphinx docutils pygments nose hypothesis sphinx_rtd_theme
-cyg-get -upgrade p7zip autoconf binutils bison gcc-code gcc-g++ gdb git libtool make patchutils pkg-config readline file renameutils socat time tree util-linux wget
+pip install --upgrade sphinx sphinx_rtd_theme pygments #docutils nose hypothesis
 
-wget.exe https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-3.3.exe
-.\MozillaBuildSetup-3.3.exe /S
+# Hide the Download-StatusBar and improve download speed of wget-Cmdlet
+$ProgressPreference = 'SilentlyContinue'
+
+# Download and install MozillaBuild environment
+# DON'T USE MozillaBuild 4.0. At time of writing, it fails even to start building sm
+wget -Uri $mozBuildUri -OutFile $mozBuildFile
+Start-Process -Filepath "$mozBuildFile" -ArgumentList "/S"
 sleep 120
-del MozillaBuildSetup-3.3.exe
 
+# Download and install Erlang/OTP 23
+wget -Uri $erlBuildUri -OutFile $erlBuildFile
+Start-Process -Filepath "$erlBuildFile" -ArgumentList "/S /D=${erlInstallPath}"
+sleep 120
+
+# Download and install Elixier
+wget -Uri $elxBuildUri -OutFile $elxBuildFile
+Expand-Archive -Path $elxBuildFile -DestinationPath "c:\relax\elixir"
+copy "c:\relax\elixir\*" ${erlInstallPath} -Recurse -Force
+
+# Download and install VCPkg
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
-.\bootstrap-vcpkg.bat -disableMetrics -win64
+.\bootstrap-vcpkg.bat -disableMetrics
 .\vcpkg integrate install --triplet x64-windows
-.\vcpkg remove openssl icu curl[openssl,tool]
-.\vcpkg install openssl icu curl[openssl,tool] --triplet x64-windows
+.\vcpkg install icu --triplet x64-windows
 cd ..
 
-# below is for Erlang compile to be successful - not required for too long, see:
-#   https://github.com/erlang/otp/pull/2456
+# we know what we are doing (, do we really?)
+Set-ExecutionPolicy Bypass -Scope CurrentUser -Force
 
-New-Item -Path C:\relax\vcpkg\installed\x64-windows\lib\libeay32.lib -ItemType HardLink -Value C:\relax\vcpkg\installed\x64-windows\lib\libcrypto.lib
-New-Item -Path C:\relax\vcpkg\installed\x64-windows\lib\ssleay32.lib -ItemType HardLink -Value C:\relax\vcpkg\installed\x64-windows\lib\libssl.lib
-New-Item -Path C:\relax\vcpkg\installed\x64-windows\lib\VC -ItemType SymbolicLink -Value C:\relax\vcpkg\installed\x64-windows\lib
-
+# start shell
 . ${PSScriptRoot}\shell.ps1
