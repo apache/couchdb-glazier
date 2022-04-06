@@ -4,16 +4,13 @@ Glazier is a set of batch files, scripts and toolchains designed to
 ease building CouchDB on Windows. It's as fully automated as
 possible, with most of the effort required only once.
 
-Glazier uses the MS Visual Studio 2022 toolchain as much as possible,
+Glazier uses the MS Visual Studio 2017 toolchain as much as possible,
 to ensure a quality Windows experience and to execute all binary
 dependencies within the same runtime.
 
 We hope Glazier simplifies using Erlang and CouchDB for you, giving
 a consistent, repeatable build environment.
 
-Of course, you can also use our [previous script collection](README.OLD.md)
-to create CouchDB for Windows. Please note that this is currently no longer
-tested.
 
 # Base Requirements
 
@@ -29,12 +26,11 @@ Note that the scripts you'll run will modify your system extensively. We recomme
 Start an Administrative PowerShell console. Enter the following:
 
 ```powershell
-mkdir C:\relax\
-cd C:\relax\
+mkdir C:\Relax\
+cd C:\Relax\
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco feature enable -n allowGlobalConfirmation
 choco install git
-git config --global auto.crlf false 
 git clone https://github.com/apache/couchdb-glazier
 &.\couchdb-glazier\bin\install_dependencies.ps1
 ```
@@ -43,66 +39,134 @@ You should go get lunch. The last step will take over an hour, even on a speedy 
 
 At this point, you should have the following installed:
 
-* Visual Studio 2022 (Build Tools, Visual C++ workload, native desktop workload)
-* Windows 10 SDK (by native desktop workload; 10.0.19041.0)
+* Visual Studio 2017 (Build Tools, Visual C++ workload, native desktop workload)
+* Windows 10 SDK (10.1)
 * NodeJS (LTS version)
+* wget.exe
+* NASM
+* Cyg-get (for cygwin)
 * WiX Toolset
 * Python 3
-  * Python packages sphinx, sphinx_rtd_theme and pygments
+  * Python packages sphinx, docutils, pygments, nose, hypothesis, and `sphinx_rtd_theme`
+* GNU Make
 * NSSM
-* Make
+* GPG4Win (for signing releases)
+* checksum
+* archiver
+* Dependency Walker
+* unzip
+* NSIS
 * NuGet
 * VSSetup
-* VSWhere
-* GNU CoreUtils (cp, rm, rmdir, ...)
-* MozillaBuild setup
+* MozillaBuild setup (3.3)
 * VCPkg (https://github.com/Microsoft/vcpkg), which built and installed:
-  * ICU (at time of writing, 69.1)
+  * OpenSSL (at time of writing, 1.1.1)
+  * ICU (at time of writing, 61)
+* Cygwin (used for building Erlang), plus some packages required for Erlang builds
+
+# Building Erlang
+
+This section is not presently automated because it requires switching between PowerShell
+and Cygwin. It should be possible to automate (PRs welcome!)
+
+We generally need to build a version of Erlang that is not distributed directly
+by Ericsson. This may be because we require patches that are released after the
+binaries are built.
+
+For CouchDB 3.0, we build against Erlang 20.3.8.25.
+
+In the same PowerShell session, enter the following:
+
+```powershell
+cd c:\relax
+cygwin
+git clone https://github.com/erlang/otp
+cd otp
+git checkout OTP-20.3.8.25
+export PATH="/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64:/cygdrive/c/Program Files (x86)/NSIS:/cygdrive/c/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0/x64:$PATH"
+which cl link mc lc mt nmake rc
+```
+
+This should produce the following output:
+
+```
+/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/cl
+/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/link
+/cygdrive/c/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0/x64/mc
+/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lc
+/cygdrive/c/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0/x64/mt
+/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64/nmake
+/cygdrive/c/Program Files (x86)/Windows Kits/10/bin/10.0.18362.0/x64/rc
+```
+
+Continue by entering the following. This takes a while, maybe 30-60 minutes at the `otp_build` steps, so be sure to have your favourite beverage on hand while you watch.
+
+```
+cd /cygdrive/c/relax/otp
+eval `./otp_build env_win32 x64`
+./otp_build autoconf 2>&1 | tee build_autoconf.txt
+./otp_build configure --with-ssl=/cygdrive/c/relax/vcpkg/installed/x64-windows --without-javac --without-debugger --without-wx --without-ic --without-odbc --without-et --without-cosEvent --without-cosEventDomain --without-cosFileTransfer --without-cosNotification --without-cosProperty --without-cosTime --without-cosTransactions --without-orber --without-observer 2>&1 | tee build_configure.txt
+./otp_build boot -a  2>&1 | tee build_boot.txt
+./otp_build release -a  2>&1 | tee build_release.txt
+./otp_build installer_win32  2>&1 | tee build_installer_win32.txt
+release/win32/otp_win64_*.exe /S
+exit
+```
+
+You now have a full install of Erlang on your system.
+
+# Installing Elixir
+
+CouchDB uses Elixir for tests. If you intend to run the test suite (you should!), install
+Elixir now by running the following in the same PowerShell prompt:
+
+```
+wget.exe https://github.com/elixir-lang/elixir/releases/download/v1.9.4/Precompiled.zip
+arc unarchive .\Precompiled.zip
+copy .\Precompiled\* 'C:\Program Files\erl9.3.3.14\' -Recurse  -Force
+del Precompiled -Recurse
+del Precompiled.zip
+```
 
 # Building SpiderMonkey
 
 This section is not currently automated, due to the need for Mozilla's separate build
-environment. It should be possible to automate (PRs welcome!). At time of writing, we
-use the `esr91` branch of spidermonkey.
+environment. It should be possible to automate (PRs welcome!)
 
 From the same PowerShell prompt, enter the following:
 
-```powershell
+```
 C:\mozilla-build\start-shell.bat
 ```
 
 At the MozillaBuild prompt, enter the following:
 
-```bash
+```
+C:\mozilla-build\start-shell.bat
 cd /c/relax
 git clone https://github.com/mozilla/gecko-dev
 cd gecko-dev
-git checkout esr91
-./mach bootstrap --application-choice js
-```
-
-Please answer the following question of `./mach boostrap`. You need this only for the first run.
-It downloads a complete build toolchain for Spidermonkey.
-
-* Would you like to create this directory? (Yn): Y
-* Would you like to run a few configuration steps to ensure Git is optimally configured? (Yn): Y
-* Will you be submitting commits to Mozilla? (Yn): n
-* Would you like to enable build system telemetry? (Yn):n
-
-
-```bash
-export MOZCONFIG=/c/relax/couchdb-glazier/moz/sm-opt
-./mach build
+git checkout esr60
+cd js/src
+sed -i -E "s/(VC\.Tools\.x86\.x64')/\1, '-products', '*'/g" ../../build/moz.configure/toolchain.configure
+autoconf-2.13
+mkdir build_OPT.OBJ
+cd build_OPT.OBJ
+../configure --disable-ctypes --disable-ion --disable-jemalloc --enable-optimize --enable-hardening --with-intl-api --build-backends=RecursiveMake --with-visual-studio-version=2017 --with-system-icu --disable-debug --enable-gczeal --target=x86_64-pc-mingw32 --host=x86_64-pc-mingw32 --prefix=/c/relax/vcpkg/installed/x64-windows
+mozmake
 exit
 ```
-Now you should have built Spidermonkey.
+
+The `sed` command adds support for building with just the VS Build Tools, which are
+sufficient for just SpiderMonkey. (Otherwise, you need to download an additional 9GB of
+Visual Studio. Bleah.) The build should take about 15 minutes.
+
 Back in PowerShell, copy the binaries to where our build process expects them:
 
-```powershell
-copy C:\relax\gecko-dev\sm-obj-opt\js\src\build\*.pdb C:\relax\vcpkg\installed\x64-windows\bin
-copy C:\relax\gecko-dev\sm-obj-opt\js\src\build\*.lib C:\relax\vcpkg\installed\x64-windows\lib
-copy C:\relax\gecko-dev\sm-obj-opt\dist\bin\*.dll C:\relax\vcpkg\installed\x64-windows\bin
-copy C:\relax\gecko-dev\sm-obj-opt\dist\include\* C:\relax\vcpkg\installed\x64-windows\include -Recurse -ErrorAction SilentlyContinue
+```
+copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\js\src\build\*.pdb C:\relax\vcpkg\installed\x64-windows\bin
+copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\dist\bin\*.dll C:\relax\vcpkg\installed\x64-windows\bin
+copy C:\relax\gecko-dev\js\src\build_OPT.OBJ\dist\include\* C:\relax\vcpkg\installed\x64-windows\include -Recurse -ErrorAction SilentlyContinue
 ```
 
 # Building CouchDB itself
@@ -112,7 +176,7 @@ You're finally ready. You should snapshot your VM at this point!
 Open a new PowerShell window. Set up your shell correctly (this step works if you've
 closed your PowerShell window before any of the previous steps, too):
 
-```powershell
+```
 &c:\relax\couchdb-glazier\bin\shell.ps1
 ```
 
@@ -123,7 +187,7 @@ cd c:\relax
 git clone https://github.com/apache/couchdb
 cd couchdb
 git checkout <tag or branch of interest goes here>
-&.\configure.ps1 -SpiderMonkeyVersion 91
+&.\configure.ps1 -SpiderMonkeyVersion 60
 make -f Makefile.win
 ```
 
