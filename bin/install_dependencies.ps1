@@ -19,14 +19,11 @@ Add-MpPreference -ExclusionPath "C:\relax"
 # Install build tools - requires English language pack installed
 choco install visualstudio2022buildtools "--passive --locale en-US"
 choco install visualstudio2022-workload-vctools --package-parameters "--add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.VC.Redist.MSM"
-#choco install visualstudio2022-workload-nativedesktop
-choco install nodejs-lts wixtoolset make nssm python3 vswhere
-#choco install windows-sdk-10.1 nodejs-lts wget nasm cyg-get wixtoolset python3 make nssm gpg4win checksum archiver dependencywalker unzip
-#choco install nsis --version=2.51
+choco install nodejs-lts wixtoolset make nssm python3 vswhere gnuwin32-coreutils.portable
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module VSSetup -Scope CurrentUser -Force
 python -m pip install --upgrade pip
-pip install --upgrade sphinx sphinx_rtd_theme pygments #docutils nose hypothesis
+pip install --upgrade sphinx sphinx_rtd_theme pygments nose2 hypothesis
 
 # Hide the Download-StatusBar and improve download speed of wget-Cmdlet
 $ProgressPreference = 'SilentlyContinue'
