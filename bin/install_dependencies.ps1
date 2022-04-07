@@ -18,7 +18,7 @@ Add-MpPreference -ExclusionPath "C:\relax"
 
 # Install build tools - requires English language pack installed
 choco install visualstudio2022buildtools "--passive --locale en-US"
-choco install visualstudio2022-workload-vctools --package-parameters "--add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.VC.Redist.MSM"
+choco install visualstudio2022-workload-vctools --package-parameters "--add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.VC.Redist.MSM --add Microsoft.Net.Component.4.8.TargetingPack"
 choco install nodejs-lts wixtoolset make nssm python3 vswhere gnuwin32-coreutils.portable
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module VSSetup -Scope CurrentUser -Force
