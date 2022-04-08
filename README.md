@@ -48,7 +48,7 @@ At this point, you should have the following installed:
 * NodeJS (LTS version)
 * WiX Toolset
 * Python 3
-  * Python packages sphinx, sphinx_rtd_theme and pygments
+  * Python packages sphinx, sphinx_rtd_theme, pygments, nose2 and hypothesis
 * NSSM
 * Make
 * NuGet
