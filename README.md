@@ -50,7 +50,7 @@ At this point, you should have the following installed:
 * Python 3
   * Python packages sphinx, sphinx_rtd_theme, pygments, nose2 and hypothesis
 * NSSM
-* Make
+* GNU make
 * NuGet
 * VSSetup
 * VSWhere
@@ -169,31 +169,6 @@ Zlib, OpenSSL, Mozilla's SpiderMonkey JavaScript engine, and IBM's ICU were
 not available at a consistent compiler and VC runtime release.
 
 There is a branch of glazier that has been used to build each CouchDB release.
-
-## UNIX-friendly shell details
-
-Our goal is to get the path set up in this order:
-
-1. erlang and couchdb build helper scripts
-2. Microsoft VC compiler, linker, etc from Windows SDK
-3. cygwin path for other build tools like make, autoconf, libtool
-4. the remaining windows system path
-
-It seems this is a challenge for most environments, so `glazier` gets this all right for
-you by running the MSVC environment, then tacking on the things Erlang expects at the end
-of the path.
-
-Overall, the desired order for your $PATH is:
-
-- Erlang build helper scripts
-- Visual C++ / .NET framework / SDK
-- Ancillary Erlang and CouchDB packaging tools
-- Usual cygwin unix tools such as make, gcc
-- Ancillary glazier/relax tools for building dependent libraries
-- Usual Windows folders `%windir%;%windir%\system32` etc
-- Various settings form the `otp_build` script
-
-More details are at [erlang INSTALL-Win32.md on github](https://github.com/erlang/otp/blob/master/HOWTO/INSTALL-WIN32.md)
 
 ## Windows silent installs
 
