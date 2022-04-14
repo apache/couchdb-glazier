@@ -19,7 +19,7 @@ $mozBuildFile = Split-Path $mozBuildUri -Leaf
 # ERLANG BUILD SETTINGS
 
 # Download location of the Erlang/OTP Environment for Windows (x64)
-$erlBuildUri = "https://github.com/erlang/otp/releases/download/OTP-23.3.4.12/otp_win64_23.3.4.12.exe"
+$erlBuildUri = "https://github.com/erlang/otp/releases/download/OTP-23.3.4.13/otp_win64_23.3.4.13.exe"
 $erlBuildFile = Split-Path $erlBuildUri -Leaf
 $erlDir = "erl23"
 $erlInstallPath = "C:\Program Files\${erlDir}"
@@ -27,6 +27,6 @@ $erlInstallPath = "C:\Program Files\${erlDir}"
 # ERLANG BUILD SETTINGS
 
 # Download location of the Elixier binaries for Windows (x64)
-$elxBuildUri = "https://github.com/elixir-lang/elixir/releases/download/v1.13.3/Precompiled.zip"
+$elxBuildUri = "https://github.com/elixir-lang/elixir/releases/download/v1.12.3/Precompiled.zip"
 $elxBuildFile = Split-Path $elxBuildUri -Leaf
-
+$elxInstallPath = "C:\relax\elixir"
