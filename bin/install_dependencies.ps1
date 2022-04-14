@@ -41,8 +41,7 @@ sleep 120
 
 # Download and install Elixier
 wget -Uri $elxBuildUri -OutFile $elxBuildFile
-Expand-Archive -Path $elxBuildFile -DestinationPath "c:\relax\elixir"
-copy "c:\relax\elixir\*" ${erlInstallPath} -Recurse -Force
+Expand-Archive -Path $elxBuildFile -DestinationPath $elxInstallPath
 
 # Download and install VCPkg
 git clone https://github.com/Microsoft/vcpkg.git

@@ -28,7 +28,8 @@ if ($installationPath -and (test-path "$installationPath\Common7\Tools\vsdevcmd.
 Import-Module ${PSScriptRoot}\which.psm1
 
 $env:VCPKG_BIN = "C:\relax\vcpkg\installed\x64-windows\bin"
-$env:PATH += ";${erlInstallPath}\bin" 
+$env:PATH += ";${erlInstallPath}\bin"
+$env:PATH += ";${elxInstallPath}\bin" 
 $env:PATH += ";C:\relax\vcpkg\installed\x64-windows\bin"
 $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
 
