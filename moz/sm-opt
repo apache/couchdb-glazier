@@ -1,0 +1,24 @@
+# Build only the JS shell
+ac_add_options --enable-application=js
+
+# Enable optimization for speed
+ac_add_options --enable-optimize
+
+# Disable debug checks to better match a release build of Firefox.
+ac_add_options --disable-debug
+
+ac_add_options --disable-ctypes
+ac_add_options --disable-jit
+ac_add_options --disable-jemalloc
+ac_add_options --enable-hardening
+ac_add_options --with-intl-api
+ac_add_options --build-backends=RecursiveMake
+#ac_add_options --with-system-icu
+ac_add_options --enable-gczeal
+#ac_add_options --target=x86_64-pc-mingw32
+#ac_add_options --host=x86_64-pc-mingw32
+
+# Use a separate objdir for optimized builds to allow easy
+# switching between optimized and debug builds while developing.
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/sm-obj-opt
