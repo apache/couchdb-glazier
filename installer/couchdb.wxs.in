@@ -48,7 +48,7 @@
       </Directory>
 
       <DirectoryRef Id="TARGETDIR">
-         <Merge Id="VCRedist141" SourceFile="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Redist\MSVC\14.16.27012\MergeModules\Microsoft_VC141_CRT_x64.msm" DiskId="1" Language="0"/>
+         <Merge Id="VCRedist143" SourceFile="C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Redist\MSVC\14.31.31103\MergeModules\Microsoft_VC143_CRT_x64.msm" DiskId="1" Language="0"/>
       </DirectoryRef>
 
       <SetProperty Id="ARPINSTALLLOCATION" Value="[APPLICATIONFOLDER]"
@@ -105,8 +105,8 @@
          <ComponentGroupRef Id="CouchDBFilesGroup" />
       </Feature>
 
-      <Feature Id="VCRedist141" Title="Visual C++ 14.1 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
-         <MergeRef Id="VCRedist141"/>
+      <Feature Id="VCRedist143" Title="Microsoft Visual C++ 2015-2022 Redistributable (x64)" AllowAdvertise="no" Display="hidden" Level="1">
+         <MergeRef Id="VCRedist143"/>
       </Feature>
 
       <!--Custom actions and execute sequences-->
@@ -119,10 +119,32 @@
          Value="ADMINCONFIGFILE=[APPLICATIONFOLDER]etc\local.d\10-admins.ini;ADMINUSER=[ADMINUSER];ADMINPASSWORD=[ADMINPASSWORD]"
          />
       <CustomAction
+         Id="SetCookieValueInVmArgsPropertyValues"
+         Property="WriteCookieToVmArgs"
+         Value="ETCDIR=[APPLICATIONFOLDER]etc;COOKIEVALUE=[COOKIEVALUE]"
+         />
+      <CustomAction
+         Id="InitCookieValue"
+         Return="check"
+         DllEntry="InitCookieValue"
+         HideTarget="yes"
+         BinaryKey="CouchIniActionDll" 
+         Impersonate="no"
+         />
+      <CustomAction
          Id="WriteAdminIniFile"
          Return="check"
          Execute="deferred"
          DllEntry="WriteAdminIniFile"
+         HideTarget="yes"
+         BinaryKey="CouchIniActionDll" 
+         Impersonate="no"
+         />
+      <CustomAction
+         Id="WriteCookieToVmArgs"
+         Return="check"
+         Execute="deferred"
+         DllEntry="WriteCookieToVmArgs"
          HideTarget="yes"
          BinaryKey="CouchIniActionDll" 
          Impersonate="no"
@@ -252,8 +274,10 @@
       <Property Id="SCHEDULEREBOOT" Value="0" />
       <InstallExecuteSequence>
          <Custom Action="SetAdminIniCustomActionPropertyValues" After="InstallFiles">NOT Installed AND NOT REMOVE</Custom>
-         <Custom Action="WriteAdminIniFile" After="SetAdminIniCustomActionPropertyValues">NOT Installed AND NOT REMOVE</Custom>
-         <Custom Action="SetMaybeCopyIniFilesValues" After="WriteAdminIniFile">NOT Installed AND NOT REMOVE</Custom>
+         <Custom Action="SetCookieValueInVmArgsPropertyValues" After="SetAdminIniCustomActionPropertyValues">NOT Installed AND NOT REMOVE</Custom>
+         <Custom Action="WriteAdminIniFile" After="SetCookieValueInVmArgsPropertyValues">NOT Installed AND NOT REMOVE</Custom>
+         <Custom Action="WriteCookieToVmArgs" After="WriteAdminIniFile">NOT Installed AND NOT REMOVE</Custom>
+         <Custom Action="SetMaybeCopyIniFilesValues" After="WriteCookieToVmArgs">NOT Installed AND NOT REMOVE</Custom>
          <Custom Action="MaybeCopyIniFiles" After="SetMaybeCopyIniFilesValues">NOT Installed AND NOT REMOVE</Custom>
          <Custom Action="InstallCouchDBService" After="MaybeCopyIniFiles">INSTALLSERVICE AND NOT Installed AND NOT REMOVE</Custom>
          <Custom Action="StartCouchDBService" After="InstallCouchDBService">INSTALLSERVICE AND NOT Installed AND NOT REMOVE</Custom>

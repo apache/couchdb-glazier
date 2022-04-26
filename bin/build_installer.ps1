@@ -69,9 +69,10 @@ candle -arch x64 -ext WiXUtilExtension couchdb.wxs
 candle -arch x64 "-dCouchDir=${CouchDB}" couchdbfiles.wxs
 candle -arch x64 -ext WiXUtilExtension couchdb_wixui.wxs
 candle -arch x64 -ext WiXUtilExtension adminprompt.wxs
+candle -arch x64 -ext WiXUtilExtension cookieprompt.wxs
 candle -arch x64 -ext WiXUtilExtension customexit.wxs
 candle -arch x64 -ext WiXUtilExtension CouchInstallDirDlg.wxs
-light -sw1076 -sice:ICE17 -ext WixUIExtension -ext WiXUtilExtension "-cultures:en-us;en;neutral" adminprompt.wixobj couchdb.wixobj couchdbfiles.wixobj couchdb_wixui.wixobj customexit.wixobj CouchInstallDirDlg.wixobj -out apache-couchdb-${CouchDBVersion}.msi
+light -sw1076 -sice:ICE17 -ext WixUIExtension -ext WiXUtilExtension "-cultures:en-us;en;neutral" adminprompt.wixobj cookieprompt.wixobj couchdb.wixobj couchdbfiles.wixobj couchdb_wixui.wixobj customexit.wixobj CouchInstallDirDlg.wixobj -out apache-couchdb-${CouchDBVersion}.msi
 
 Pop-Location
 

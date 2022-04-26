@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CustomAction</RootNamespace>
     <AssemblyName>CouchIniAction</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <WixCATargetsPath Condition=" '$(WixCATargetsPath)' == '' ">C:\Program Files (x86)\MSBuild\Microsoft\WiX\v3.x\wix.ca.targets</WixCATargetsPath>
   </PropertyGroup>

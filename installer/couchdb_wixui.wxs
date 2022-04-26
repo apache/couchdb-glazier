@@ -44,9 +44,11 @@
             <Publish Dialog="CouchInstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
 
             <Publish Dialog="AdminPromptDlg" Control="Back" Event="NewDialog" Value="CouchInstallDirDlg">1</Publish>
-            <Publish Dialog="AdminPromptDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+            <Publish Dialog="AdminPromptDlg" Control="Next" Event="NewDialog" Value="CookiePromptDlg">1</Publish>
+            <Publish Dialog="CookiePromptDlg" Control="Back" Event="NewDialog" Value="AdminPromptDlg">1</Publish>
+            <Publish Dialog="CookiePromptDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
             
-            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="AdminPromptDlg" Order="1">NOT Installed</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="CookiePromptDlg" Order="1">NOT Installed</Publish>
             <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
             <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+   <Fragment>
+      <Property Id="COOKIEVALUE" Hidden="yes" />
+      <UI>
+         <Dialog Id="CookiePromptDlg" Width="370" Height="270" Title="Set Cookie value">
+            <Control Id="Title" Type="Text" X="20" Y="20" Width="220" Height="30" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Emphasized}Set Cookie value" />
+            <Control Id="Description" Type="Text" X="20" Y="50" Width="220" Height="40" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Emphasized}For security reasons, the cookie value that CouchDB instances use to communicate between each other needs to be set even in standalone mode." />
+            <Control Id="Label" Type="Text" Width="322" Height="10" X="20" Y="110" Text="Cookie value:" />
+            <Control Id="Textbox" Type="Edit" Width="200" Height="15" X="20" Y="123" Property="COOKIEVALUE" />
+	    <Control Id="Validate" Type="PushButton" Width="100" Height="15" X="140" Y="180" Text="Validate Cookie" />
+	    <Control Id="Random" Type="PushButton" Width="100" Height="15" X="20" Y="180" Text="Random Cookie">
+               <Publish Event="DoAction" Value="InitCookieValue">1</Publish>
+               <Publish Property="COOKIEVALUE" Value="[COOKIEVALUE]">1</Publish>
+	    </Control>
+            <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
+               <Condition Action="disable"><![CDATA[(COOKIEVALUE = "") OR (COOKIEVALUE >< " ")]]></Condition>
+               <Condition Action="enable"><![CDATA[(COOKIEVALUE <> "") AND NOT (COOKIEVALUE >< " ")]]></Condition>
+
+               <Publish Property="COOKIEVALUE" Value="[COOKIEVALUE]">1</Publish>
+            </Control>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+               <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            </Control>
+         </Dialog>
+      </UI>
+   </Fragment>
+</Wix>
+
