@@ -187,7 +187,7 @@ namespace CustomAction
         {
             using (FileStream stream = File.OpenRead(file))
             {
-                SHA256Managed sha = new SHA256Managed();
+                SHA256CryptoServiceProvider sha = new SHA256CryptoServiceProvider();
                 byte[] checksum = sha.ComputeHash(stream);
                 return BitConverter.ToString(checksum).Replace("-", String.Empty);
             }
