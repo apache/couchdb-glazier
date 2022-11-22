@@ -50,7 +50,7 @@ Move-Item -Path "${CouchDB}\etc\vm.args" -Destination "${CouchDB}\etc\vm.args.di
       -replace "^writer = stderr", "writer = file" |
       Out-File "default.ini"
 # WiX skips empty directories, so we create a dummy logfile
-Write-Output "New Log" | Out-File "${CouchDB}\var\log\couchdb.log"
+New-Item -Name "${CouchDB}\var\log\couchdb.log" -ItemType File
 
 # Build our custom action.
 Push-Location CustomAction
