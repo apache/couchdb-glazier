@@ -34,7 +34,7 @@ cd C:\relax\
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 choco feature enable -n allowGlobalConfirmation
 choco install git
-git config --global auto.crlf false 
+git config --global core.autocrlf false
 git clone https://github.com/apache/couchdb-glazier
 &.\couchdb-glazier\bin\install_dependencies.ps1
 ```
@@ -77,18 +77,18 @@ At the MozillaBuild prompt, enter the following:
 cd /c/relax
 git clone https://github.com/mozilla/gecko-dev
 cd gecko-dev
-git checkout esr91
 ./mach bootstrap --application-choice js
+git checkout esr91
 ```
 
 Please answer the following question of `./mach boostrap`. You need this only for the first run.
-It downloads a complete build toolchain for Spidermonkey.
+It downloads a complete build toolchain for Spidermonkey. You should run `./mach bootstrap` from
+the master branch and switch afterwards to your explicit ESR branch!
 
 * Would you like to create this directory? (Yn): Y
 * Would you like to run a few configuration steps to ensure Git is optimally configured? (Yn): Y
 * Will you be submitting commits to Mozilla? (Yn): n
 * Would you like to enable build system telemetry? (Yn):n
-
 
 ```bash
 export MOZCONFIG=/c/relax/couchdb-glazier/moz/sm-opt
@@ -99,7 +99,6 @@ Now you should have built Spidermonkey.
 Back in PowerShell, copy the binaries to where our build process expects them:
 
 ```powershell
-copy C:\relax\gecko-dev\sm-obj-opt\js\src\build\*.pdb C:\relax\vcpkg\installed\x64-windows\bin
 copy C:\relax\gecko-dev\sm-obj-opt\js\src\build\*.lib C:\relax\vcpkg\installed\x64-windows\lib
 copy C:\relax\gecko-dev\sm-obj-opt\dist\bin\*.dll C:\relax\vcpkg\installed\x64-windows\bin
 copy C:\relax\gecko-dev\sm-obj-opt\dist\include\* C:\relax\vcpkg\installed\x64-windows\include -Recurse -ErrorAction SilentlyContinue
