@@ -11,9 +11,8 @@ ac_add_options --disable-ctypes
 ac_add_options --disable-jit
 ac_add_options --disable-jemalloc
 ac_add_options --enable-hardening
-ac_add_options --with-intl-api
+ac_add_options --without-intl-api
 ac_add_options --build-backends=RecursiveMake
-#ac_add_options --with-system-icu
 ac_add_options --enable-gczeal
 #ac_add_options --target=x86_64-pc-mingw32
 #ac_add_options --host=x86_64-pc-mingw32

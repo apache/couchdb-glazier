@@ -19,37 +19,53 @@ Add-MpPreference -ExclusionPath "C:\relax"
 # Install build tools - requires English language pack installed
 choco install visualstudio2022buildtools "--passive --locale en-US"
 choco install visualstudio2022-workload-vctools --package-parameters "--add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.VC.Redist.MSM --add Microsoft.Net.Component.4.8.TargetingPack"
-choco install nodejs-lts wixtoolset make nssm python3 vswhere gnuwin32-coreutils.portable
+choco install wixtoolset make nssm vswhere gnuwin32-coreutils.portable
+choco install nodejs --version=16.19.0
+choco install python --version=3.10.8
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module VSSetup -Scope CurrentUser -Force
+
+# Explicit workaround that refresnenv is working for this powershell shell
+$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+if (Test-Path($ChocolateyProfile)) {
+  Import-Module "$ChocolateyProfile"
+}
+refreshenv
+
 python -m pip install --upgrade pip
-pip install --upgrade sphinx sphinx_rtd_theme pygments nose2 hypothesis
+pip install --upgrade sphinx sphinxcontrib-httpdomain sphinx_rtd_theme pygments nose2 hypothesis
 
 # Hide the Download-StatusBar and improve download speed of wget-Cmdlet
 $ProgressPreference = 'SilentlyContinue'
 
 # Download and install MozillaBuild environment
 # DON'T USE MozillaBuild 4.0. At time of writing, it fails even to start building sm
-wget -Uri $mozBuildUri -OutFile $mozBuildFile
-Start-Process -Filepath "$mozBuildFile" -ArgumentList "/S"
-sleep 120
+Write-Output "Downloading MozillaBuild ..."
+Invoke-WebRequest -Uri $mozBuildUri -OutFile $mozBuildFile
+Write-Output "Installing MozillaBuild ..."
+Start-Process -Wait -Filepath "$mozBuildFile" -ArgumentList "/S"
 
 # Download and install Erlang/OTP 23
-wget -Uri $erlBuildUri -OutFile $erlBuildFile
-Start-Process -Filepath "$erlBuildFile" -ArgumentList "/S /D=${erlInstallPath}"
-sleep 120
+Write-Output "Downloading Erlang ..."
+Invoke-WebRequest -Uri $erlBuildUri -OutFile $erlBuildFile
+Write-Output "Installing Erlang ..."
+Start-Process -Wait -Filepath "$erlBuildFile" -ArgumentList "/S /D=${erlInstallPath}"
 
-# Download and install Elixier
-wget -Uri $elxBuildUri -OutFile $elxBuildFile
+# Download and install Elixir
+Write-Output "Downloading Elixir ..."
+Invoke-WebRequest -Uri $elxBuildUri -OutFile $elxBuildFile
+Write-Output "Installing Elixir ..."
 Expand-Archive -Path $elxBuildFile -DestinationPath $elxInstallPath
 
 # Download and install VCPkg
+Write-Output "Downloading VCPkg ..."
 git clone https://github.com/Microsoft/vcpkg.git
-cd vcpkg
+Set-Location vcpkg
+Write-Output "Installing VCPkg ..."
 .\bootstrap-vcpkg.bat -disableMetrics
 .\vcpkg integrate install --triplet x64-windows
 .\vcpkg install icu --triplet x64-windows
-cd ..
+Set-Location ..
 
 # we know what we are doing (, do we really?)
 Set-ExecutionPolicy Bypass -Scope CurrentUser -Force
