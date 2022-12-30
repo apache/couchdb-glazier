@@ -48,7 +48,7 @@
       </Directory>
 
       <DirectoryRef Id="TARGETDIR">
-         <Merge Id="VCRedist143" SourceFile="C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Redist\MSVC\14.31.31103\MergeModules\Microsoft_VC143_CRT_x64.msm" DiskId="1" Language="0"/>
+         <Merge Id="VCRedist143" SourceFile="C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Redist\MSVC\v143\MergeModules\Microsoft_VC143_CRT_x64.msm" DiskId="1" Language="0"/>
       </DirectoryRef>
 
       <SetProperty Id="ARPINSTALLLOCATION" Value="[APPLICATIONFOLDER]"
