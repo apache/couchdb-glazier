@@ -19,7 +19,7 @@ $mozBuildFile = Split-Path $mozBuildUri -Leaf
 # ERLANG BUILD SETTINGS
 
 # Download location of the Erlang/OTP Environment for Windows (x64)
-$erlBuildUri = "https://github.com/erlang/otp/releases/download/OTP-24.3.4.6/otp_win64_24.3.4.6.exe"
+$erlBuildUri = "https://github.com/erlang/otp/releases/download/OTP-24.3.4.7/otp_win64_24.3.4.7.exe"
 $erlBuildFile = Split-Path $erlBuildUri -Leaf
 $erlDir = "erl24"
 $erlInstallPath = "C:\Program Files\${erlDir}"

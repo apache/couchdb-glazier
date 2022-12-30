@@ -10,9 +10,21 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-if (-Not (Test-Path "${PSScriptRoot}\..\..\couchdb\rel\couchdb"))
+# PLEASE EDIT ME AND CHANGE $CouchDB_Root to the CouchDB folder on disk ####
+# Example:
+# $CouchDB_Root = "C:\relax\apache-couchdb-3.3.0"
+$CouchDB_Root = "PLEASE_SET_PATH_TO_COUCHDB_DIR"
+# ###################
+
+$CouchDB = "${CouchDB_Root}\rel\couchdb"
+if ($CouchDB_Root -eq "PLEASE_SET_PATH_TO_COUCHDB_DIR")
 {
-   Write-Error "CouchDB release directory not found. Have you run make release?"
+   Write-Error "Please set the env variable CouchDB_Root in this script. Exiting..."
+   exit 1
+}
+if (-Not ((Test-Path $CouchDB) -and ($CouchDB.EndsWith("rel\couchdb"))))
+{
+   Write-Error "CouchDB release directory not found. Have you run make release? Exiting..."
    exit 1
 }
 if (! $env:VCPKG_BIN)
@@ -21,7 +33,6 @@ if (! $env:VCPKG_BIN)
    exit 1
 }
 
-$CouchDB = "${PSScriptRoot}\..\..\couchdb\rel\couchdb"
 $Glazier = "${PSScriptRoot}\.."
 $CouchDBVersion = Get-Content "${CouchDB}\releases\start_erl.data" |
       ForEach-Object {$_.Split(" ")[1]}
@@ -36,7 +47,7 @@ Remove-Item "${CouchDB}\bin\*.dll", "${CouchDB}\bin\nssm.exe" -ErrorAction Ignor
 # add build assets we need in the package
 Copy-Item -Path "${env:VCPKG_BIN}\*.dll" -Destination "${CouchDB}\bin"
 Copy-Item -Path "C:\ProgramData\Chocolatey\lib\nssm\tools\nssm.exe" -Destination "${CouchDB}\bin"
-Copy-Item -Path "${CouchDB}\etc\default.ini" -Destination "."
+Move-Item -Path "${CouchDB}\etc\default.ini" -Destination "."
 Move-Item -Path "${CouchDB}\etc\local.ini" -Destination "${CouchDB}\etc\local.ini.dist"
 Move-Item -Path "${CouchDB}\etc\vm.args" -Destination "${CouchDB}\etc\vm.args.dist"
 
@@ -46,11 +57,12 @@ Move-Item -Path "${CouchDB}\etc\vm.args" -Destination "${CouchDB}\etc\vm.args.di
       -replace "###RELNOTESVERSION###", "${RelNotesVersion}" |
       Set-Content "couchdb.wxs"
 (Get-Content "default.ini") `
-      -replace "^; file =.*", "file = ./var/log/couchdb.log" `
-      -replace "^writer = stderr", "writer = file" |
-      Out-File "default.ini"
+      -replace "^;file =.*", "file = ./var/log/couchdb.log" `
+      -replace "^;writer = stderr", "writer = file" |
+      Out-File "default.ini" -Encoding ascii
+Move-Item -Path ".\default.ini" -Destination "${CouchDB}\etc\default.ini"
 # WiX skips empty directories, so we create a dummy logfile
-New-Item -Name "${CouchDB}\var\log\couchdb.log" -ItemType File
+Out-File -FilePath "${CouchDB}\var\log\couchdb.log" -Encoding ascii
 
 # Build our custom action.
 Push-Location CustomAction
