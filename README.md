@@ -63,7 +63,7 @@ At this point, you should have the following installed:
 
 This section is not currently automated, due to the need for Mozilla's separate build
 environment. It should be possible to automate (PRs welcome!). At time of writing, we
-use the `esr91` branch of spidermonkey.
+use the `esr91` branch of SpiderMonkey.
 
 From the same PowerShell prompt, enter the following:
 
@@ -81,21 +81,33 @@ cd gecko-dev
 git checkout esr91
 ```
 
-Please answer the following question of `./mach boostrap`. You need this only for the first run.
-It downloads a complete build toolchain for Spidermonkey. You should run `./mach bootstrap` from
-the master branch and switch afterwards to your explicit ESR branch!
+Please answer the following questions of `./mach boostrap`.  Note that some of them may not show
+up. You need this only for the first run. It downloads a complete build toolchain for
+SpiderMonkey. You should run `./mach bootstrap` from the `master` branch and switch afterwards
+to your explicit ESR branch!
 
 * Would you like to create this directory? (Yn): Y
 * Would you like to run a few configuration steps to ensure Git is optimally configured? (Yn): Y
 * Will you be submitting commits to Mozilla? (Yn): n
-* Would you like to enable build system telemetry? (Yn):n
+* Would you like to enable build system telemetry? (Yn): n
+
+On completely fresh Windows installs, it may happen that the necessary SSL certificates
+are not yet stored on the system. This can cause that some of the files cannot be
+downloaded over HTTPS. Open the URL https://static.rust-lang.org/ on Internet Explorer
+and install the missing certificate to resolve this.
+
+The build process may complain about clobbering (perhaps due to switching off from `master`).
+In this case, create the `CLOBBER` file to silence the related warnings.
+
+Now you should be set to launch the build.
 
 ```bash
 export MOZCONFIG=/c/relax/couchdb-glazier/moz/sm-opt
 ./mach build
 exit
 ```
-Now you should have built Spidermonkey.
+
+Once finished, you should have built SpiderMonkey.
 Back in PowerShell, copy the binaries to where our build process expects them:
 
 ```powershell
@@ -103,6 +115,15 @@ copy C:\relax\gecko-dev\sm-obj-opt\js\src\build\*.lib C:\relax\vcpkg\installed\x
 copy C:\relax\gecko-dev\sm-obj-opt\dist\bin\*.dll C:\relax\vcpkg\installed\x64-windows\bin
 copy C:\relax\gecko-dev\sm-obj-opt\dist\include\* C:\relax\vcpkg\installed\x64-windows\include -Recurse -ErrorAction SilentlyContinue
 ```
+
+Be sure to verify if all the components are built properly, especially the static library,
+i.e. `mozjs-91.lib`, otherwise CouchDB will fail to build. In case anything is missing,
+check the logs for errors and try searching for them on the [Mozilla Bug Tracker](https://bugzilla.mozilla.org/home).
+
+Currently known problems:
+
+- [lld-link: error: duplicate symbol: HeapAlloc](https://bugzilla.mozilla.org/show_bug.cgi?id=1802675)
+- [JS shell build with --disable-jemalloc hits linker error with 2 DllMain](https://bugzilla.mozilla.org/show_bug.cgi?id=1751561)
 
 # Building CouchDB itself
 
