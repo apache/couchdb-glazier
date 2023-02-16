@@ -103,6 +103,7 @@ Now you should be set to launch the build.
 
 ```bash
 export MOZCONFIG=/c/relax/couchdb-glazier/moz/sm-opt
+./mach create-mach-environment
 ./mach build
 exit
 ```
