@@ -19,9 +19,11 @@ Add-MpPreference -ExclusionPath "C:\relax"
 # Install build tools - requires English language pack installed
 choco install visualstudio2022buildtools "--passive --locale en-US"
 choco install visualstudio2022-workload-vctools --package-parameters "--add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.VC.Redist.MSM --add Microsoft.Net.Component.4.8.TargetingPack"
-choco install wixtoolset make nssm vswhere gnuwin32-coreutils.portable
+choco install make nssm vswhere gnuwin32-coreutils.portable
+choco install wixtoolset --version=3.11.2
 choco install nodejs --version=16.19.0
 choco install python --version=3.10.8
+choco install archiver --version=3.1.0
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module VSSetup -Scope CurrentUser -Force
 
@@ -38,14 +40,7 @@ pip install --upgrade sphinx sphinxcontrib-httpdomain sphinx_rtd_theme pygments 
 # Hide the Download-StatusBar and improve download speed of wget-Cmdlet
 $ProgressPreference = 'SilentlyContinue'
 
-# Download and install MozillaBuild environment
-# DON'T USE MozillaBuild 4.0. At time of writing, it fails even to start building sm
-Write-Output "Downloading MozillaBuild ..."
-Invoke-WebRequest -Uri $mozBuildUri -OutFile $mozBuildFile
-Write-Output "Installing MozillaBuild ..."
-Start-Process -Wait -Filepath "$mozBuildFile" -ArgumentList "/S"
-
-# Download and install Erlang/OTP 23
+# Download and install Erlang/OTP 24
 Write-Output "Downloading Erlang ..."
 Invoke-WebRequest -Uri $erlBuildUri -OutFile $erlBuildFile
 Write-Output "Installing Erlang ..."
@@ -65,7 +60,27 @@ Write-Output "Installing VCPkg ..."
 .\bootstrap-vcpkg.bat -disableMetrics
 .\vcpkg integrate install --triplet x64-windows
 .\vcpkg install icu --triplet x64-windows
+.\vcpkg install openssl --triplet x64-windows
 Set-Location ..
+
+# Download and install SpiderMonkey
+Write-Output "Downloading SpiderMonkey ..."
+Invoke-WebRequest -Uri $smBuildUri -OutFile $smBuildFile
+Write-Output "Installing SpiderMonkey ..."
+arc unarchive $smBuildFile
+copy -Recurse -Force "$smBuild\*" .\vcpkg\installed\x64-windows\
+
+# Download and install Java 8
+Write-Output "Downloading OpenJDK 8 ..."
+Invoke-WebRequest -Uri $java8BuildUri -OutFile $java8BuildFile
+Write-Output "Installing OpenJDK 8 ..."
+arc unarchive $java8BuildFile "C:\tools"
+
+# Download and install Java 11
+Write-Output "Downloading OpenJDK 11 ..."
+Invoke-WebRequest -Uri $java11BuildUri -OutFile $java11BuildFile
+Write-Output "Installing OpenJDK 11 ..."
+arc unarchive $java11BuildFile "C:\tools"
 
 # we know what we are doing (, do we really?)
 Set-ExecutionPolicy Bypass -Scope CurrentUser -Force
