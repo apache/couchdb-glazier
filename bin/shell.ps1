@@ -29,12 +29,14 @@ Import-Module ${PSScriptRoot}\which.psm1
 
 $env:VCPKG_BIN = "C:\relax\vcpkg\installed\x64-windows\bin"
 $env:PATH += ";${erlInstallPath}\bin"
-$env:PATH += ";${elxInstallPath}\bin" 
+$env:PATH += ";${elxInstallPath}\bin"
 $env:PATH += ";C:\relax\vcpkg\installed\x64-windows\bin"
 $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
+$env:PATH += ";C:\tools\${java11Build}\bin"
 
 $env:LIB = "C:\relax\vcpkg\installed\x64-windows\lib;" + $env:LIB
 $env:INCLUDE = "C:\relax\vcpkg\installed\x64-windows\include;" + $env:INCLUDE
 $env:LIBPATH = "C:\relax\vcpkg\installed\x64-windows\lib;" + $env:LIBPATH
 
-
+$env:JAVA_HOME = "C:\tools\${java11Build}"
+$env:CLOUSEAU_JAVA_HOME = "C:\tools\${java8Build}"
