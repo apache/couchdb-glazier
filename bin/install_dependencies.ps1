@@ -21,7 +21,7 @@ choco install visualstudio2022buildtools "--passive --locale en-US"
 choco install visualstudio2022-workload-vctools --package-parameters "--add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.VC.Redist.MSM --add Microsoft.Net.Component.4.8.TargetingPack"
 choco install make nssm vswhere gnuwin32-coreutils.portable
 choco install wixtoolset --version=3.11.2
-choco install nodejs --version=16.19.0
+choco install nodejs --version=18.18.2
 choco install python --version=3.10.8
 choco install archiver --version=3.1.0
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
