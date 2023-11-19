@@ -11,10 +11,6 @@ dependencies within the same runtime.
 We hope Glazier simplifies using Erlang and CouchDB for you, giving
 a consistent, repeatable build environment.
 
-Of course, you can also use our [previous script collection](README.OLD.md)
-to create CouchDB for Windows. Please note that this is currently no longer
-tested.
-
 # Base Requirements
 
 Note that the scripts you'll run will modify your system extensively. We recommend a *dedicated build machine or VM image* for this work:
