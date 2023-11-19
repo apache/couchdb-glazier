@@ -54,21 +54,26 @@ Expand-Archive -Path $elxBuildFile -DestinationPath $elxInstallPath
 
 # Download and install VCPkg
 Write-Output "Downloading VCPkg ..."
-git clone https://github.com/Microsoft/vcpkg.git
-Set-Location vcpkg
+Invoke-WebRequest -Uri $vcpkgUri -OutFile $vcpkgFile
 Write-Output "Installing VCPkg ..."
-.\bootstrap-vcpkg.bat -disableMetrics
-.\vcpkg integrate install --triplet x64-windows
-.\vcpkg install icu --triplet x64-windows
-.\vcpkg install openssl --triplet x64-windows
-Set-Location ..
+arc unarchive $vcpkgFile
+copy -Recurse -Force "vcpkg-${vcpkgVersion}" $vcpkgInstallPath
+& "${vcpkgInstallPath}\bootstrap-vcpkg.bat" -disableMetrics
+$vcpkg = "${vcpkgInstallPath}\vcpkg"
+& $vcpkg integrate install --triplet x64-windows
+
+Write-Output "Installing ICU ..."
+& $vcpkg install icu --triplet x64-windows
+
+Write-Output "Installing OpenSSL ..."
+& $vcpkg install openssl --triplet x64-windows
 
 # Download and install SpiderMonkey
 Write-Output "Downloading SpiderMonkey ..."
 Invoke-WebRequest -Uri $smBuildUri -OutFile $smBuildFile
 Write-Output "Installing SpiderMonkey ..."
 arc unarchive $smBuildFile
-copy -Recurse -Force "$smBuild\*" .\vcpkg\installed\x64-windows\
+copy -Recurse -Force "$smBuild\*" $vcpkgBase
 
 # Download and install Java 8
 Write-Output "Downloading OpenJDK 8 ..."

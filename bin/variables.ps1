@@ -10,6 +10,15 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+# VCPKG SETTINGS
+
+# Download location of Vcpkg for Windows
+$vcpkgVersion = "2023.10.19"
+$vcpkgUri = "https://github.com/microsoft/vcpkg/archive/refs/tags/${vcpkgVersion}.zip"
+$vcpkgFile = Split-Path $vcpkgUri -Leaf
+$vcpkgInstallPath = "C:\tools\vcpkg"
+$vcpkgBase = "${vcpkgInstallPath}\installed\x64-windows"
+
 # ERLANG BUILD SETTINGS
 
 # Download location of the Erlang/OTP Environment for Windows (x64)
