@@ -22,7 +22,7 @@ choco install visualstudio2022-workload-vctools --package-parameters "--add Micr
 choco install make nssm vswhere gnuwin32-coreutils.portable
 choco install wixtoolset --version=3.11.2
 choco install nodejs --version=18.18.2
-choco install python --version=3.10.8
+choco install python --version=3.11.6
 choco install archiver --version=3.1.0
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module VSSetup -Scope CurrentUser -Force
