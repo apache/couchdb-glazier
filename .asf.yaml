@@ -14,9 +14,9 @@ github:
     - network-server
     - javascript
     - powershell
+  features:
+    issues: true
   protected_branches:
-    features:
-      issues: true
     main:
       required_status_checks:
         strict: true
