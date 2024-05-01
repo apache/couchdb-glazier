@@ -33,6 +33,7 @@ $env:PATH += ";${elxInstallPath}\bin"
 $env:PATH += ";${vcpkgBase}\bin"
 $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
 $env:PATH += ";C:\tools\${java11Build}\bin"
+$env:PATH += ";C:\tools\msys64\ucrt64\bin"
 
 $env:LIB = "${vcpkgBase}\lib;" + $env:LIB
 $env:INCLUDE = "${vcpkgBase}\include;" + $env:INCLUDE

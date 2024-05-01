@@ -24,6 +24,8 @@ choco install wixtoolset --version=3.11.2
 choco install nodejs --version=18.18.2
 choco install python --version=3.11.6
 choco install archiver --version=3.1.0
+choco install msys2 --version=20240113.0.0
+
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module VSSetup -Scope CurrentUser -Force
 
@@ -33,6 +35,11 @@ if (Test-Path($ChocolateyProfile)) {
   Import-Module "$ChocolateyProfile"
 }
 refreshenv
+
+Write-Output " ***** Setting up MSYS ******* "
+msys2_shell.cmd -defterm -no-start -ucrt64 -lc 'pacman -Syu'
+msys2_shell.cmd -defterm -no-start -ucrt64 -lc 'pacman -S --noconfirm --needed base-devel make mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-dlfcn'
+Write-Output " ******** Finished setting up MSYS ********"
 
 python -m pip install --upgrade pip
 pip install --upgrade sphinx sphinxcontrib-httpdomain sphinx_rtd_theme pygments nose2 hypothesis
