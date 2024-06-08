@@ -22,7 +22,7 @@ $vcpkgBase = "${vcpkgInstallPath}\installed\x64-windows"
 # ERLANG BUILD SETTINGS
 
 # Download location of the Erlang/OTP Environment for Windows (x64)
-$erlVersion = "24.3.4.14"
+$erlVersion = "25.3.2.12"
 $erlBuildUri = "https://github.com/erlang/otp/releases/download/OTP-${erlVersion}/otp_win64_${erlVersion}.exe"
 $erlBuildFile = Split-Path $erlBuildUri -Leaf
 $erlDir = "erl-${erlVersion}"
@@ -31,7 +31,7 @@ $erlInstallPath = "C:\tools\${erlDir}"
 # ERLANG BUILD SETTINGS
 
 # Download location of the Elixir binaries for Windows (x64)
-$elxBuildUri = "https://github.com/elixir-lang/elixir/releases/download/v1.15.7/elixir-otp-24.zip"
+$elxBuildUri = "https://github.com/elixir-lang/elixir/releases/download/v1.15.7/elixir-otp-25.zip"
 $elxBuildFile = Split-Path $elxBuildUri -Leaf
 $elxInstallPath = "C:\relax\elixir"
 
