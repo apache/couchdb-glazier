@@ -47,7 +47,7 @@ pip install --upgrade sphinx sphinxcontrib-httpdomain sphinx_rtd_theme pygments 
 # Hide the Download-StatusBar and improve download speed of wget-Cmdlet
 $ProgressPreference = 'SilentlyContinue'
 
-# Download and install Erlang/OTP 24
+# Download and install Erlang/OTP
 Write-Output "Downloading Erlang ..."
 Invoke-WebRequest -Uri $erlBuildUri -OutFile $erlBuildFile
 Write-Output "Installing Erlang ..."
