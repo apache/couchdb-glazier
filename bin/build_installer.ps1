@@ -34,8 +34,9 @@ if (! $env:VCPKG_BIN)
 }
 
 $Glazier = "${PSScriptRoot}\.."
-$CouchDBVersion = Get-Content "${CouchDB}\releases\start_erl.data" |
-      ForEach-Object {$_.Split(" ")[1]}
+$VersionMK = Get-Content -Path "$CouchDB_Root\version.mk" | Out-String | ConvertFrom-StringData
+
+$CouchDBVersion = $VersionMK.vsn_major,$VersionMK.vsn_minor,$VersionMK.vsn_patch -join "."
 $RelNotesVersion = $CouchDBVersion -replace "^(\d+\.\d+)\..*", '$1'
 
 # clean up from previous runs
