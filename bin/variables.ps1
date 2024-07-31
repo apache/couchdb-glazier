@@ -46,13 +46,13 @@ $smInstallPath = "C:\relax\vcpkg\installed\x64-windows"
 # JAVA 8 SETTINGS
 
 # Donwload location of OpenJDK 8 for Windows (x64)
-$java8Build = "zulu8.74.0.17-ca-jre8.0.392-win_x64"
+$java8Build = "zulu8.80.0.17-ca-jdk8.0.422-win_x64"
 $java8BuildUri = "https://cdn.azul.com/zulu/bin/$java8Build.zip"
 $java8BuildFile = Split-Path $java8BuildUri -Leaf
 
 # JAVA 11 SETTINGS
 
 # Donwload location of OpenJDK 11 for Windows (x64)
-$java11Build = "zulu11.68.17-ca-jre11.0.21-win_x64"
+$java11Build = "zulu11.74.15-ca-jdk11.0.24-win_x64"
 $java11BuildUri = "https://cdn.azul.com/zulu/bin/$java11Build.zip"
 $java11BuildFile = Split-Path $java11BuildUri -Leaf
