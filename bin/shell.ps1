@@ -28,16 +28,23 @@ if ($installationPath -and (test-path "$installationPath\Common7\Tools\vsdevcmd.
 Import-Module ${PSScriptRoot}\which.psm1
 
 $env:VCPKG_BIN = "${vcpkgBase}\bin"
+$env:COUCHDB_MOZJS_BIN = "${smInstallPath}\bin"
+
 $env:PATH += ";${erlInstallPath}\bin"
 $env:PATH += ";${elxInstallPath}\bin"
 $env:PATH += ";${vcpkgBase}\bin"
-$env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
-$env:PATH += ";C:\tools\${java11Build}\bin"
-$env:PATH += ";C:\tools\msys64;C:\tools\msys64\ucrt64\bin"
+$env:PATH += ";${env:wix}\bin"
+$env:PATH += ";${smInstallPath}\bin"
+$env:PATH += ";${toolsDir}\${java21Build}\bin"
+$env:PATH += ";${toolsDir}\msys64;${toolsDir}\msys64\ucrt64\bin"
 
-$env:LIB = "${vcpkgBase}\lib;" + $env:LIB
-$env:INCLUDE = "${vcpkgBase}\include;" + $env:INCLUDE
-$env:LIBPATH = "${vcpkgBase}\lib;" + $env:LIBPATH
+$env:LIB = "${vcpkgBase}\lib;${smInstallPath}\lib;" + $env:LIB
+$env:INCLUDE = "${vcpkgBase}\include;${smInstallPath}\include;" + $env:INCLUDE
+$env:LIBPATH = "${vcpkgBase}\lib;${smInstallPath}\lib;" + $env:LIBPATH
 
-$env:JAVA_HOME = "C:\tools\${java11Build}"
-$env:CLOUSEAU_JAVA_HOME = "C:\tools\${java8Build}"
+# Needed for Nouveau
+$env:JAVA_HOME = "${toolsDir}\${java21Build}"
+$env:PATH += ";${env:JAVA_HOME}\bin"
+
+# Needed for Closeau
+$env:CLOUSEAU_JAVA_HOME = "${toolsDir}\${java8Build}"

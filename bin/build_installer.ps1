@@ -27,9 +27,16 @@ if (-Not ((Test-Path $CouchDB) -and ($CouchDB.EndsWith("rel\couchdb"))))
    Write-Error "CouchDB release directory not found. Have you run make release? Exiting..."
    exit 1
 }
+
+# Test for existing env vars from shell.ps1
 if (! $env:VCPKG_BIN)
 {
    Write-Error "Your VCPKG_BIN environment variable is not set! Exiting..."
+   exit 1
+}
+if (! $env:COUCHDB_MOZJS_BIN)
+{
+   Write-Error "Your COUCHDB_MOZJS_BIN environment variable is not set! Exiting..."
    exit 1
 }
 
@@ -47,6 +54,7 @@ Remove-Item "${CouchDB}\bin\*.dll", "${CouchDB}\bin\nssm.exe" -ErrorAction Ignor
 
 # add build assets we need in the package
 Copy-Item -Path "${env:VCPKG_BIN}\*.dll" -Destination "${CouchDB}\bin"
+Copy-Item -Path "${env:COUCHDB_MOZJS_BIN}\*.dll" -Destination "${CouchDB}\bin"
 Copy-Item -Path "C:\ProgramData\Chocolatey\lib\nssm\tools\nssm.exe" -Destination "${CouchDB}\bin"
 Move-Item -Path "${CouchDB}\etc\default.ini" -Destination "."
 Move-Item -Path "${CouchDB}\etc\local.ini" -Destination "${CouchDB}\etc\local.ini.dist"

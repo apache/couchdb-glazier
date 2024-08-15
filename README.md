@@ -16,7 +16,7 @@ a consistent, repeatable build environment.
 Note that the scripts you'll run will modify your system extensively. We recommend a *dedicated build machine or VM image* for this work:
 
 - 64-bit Windows 7+. *As of CouchDB 2.0 we only support a 64-bit build of CouchDB*.
-  - We like 64-bit Windows 10 Enterprise N (missing Media Player, etc.) from MSDN.
+  - We like 64-bit Windows 10 from MSDN.
   - Apply Windows Updates and reboot until no more updates appear.
   - If using a VM, shutdown and snapshot your VM at this point.
 
@@ -40,11 +40,10 @@ You should go get lunch. The last step will take over an hour, even on a speedy 
 You're finally ready.  You should have the following installed:
 
 * Visual Studio 2022 (Build Tools, Visual C++ workload, native desktop workload)
-* Windows 10 SDK (by native desktop workload; 10.0.19041.0)
+* Windows 10 SDK (by native desktop workload)
 * NodeJS (LTS version)
-* WiX Toolset 3.11
+* WiX Toolset 3.14
 * Python 3
-  * Python packages sphinx, sphinx_rtd_theme, pygments, nose2 and hypothesis
 * NSSM
 * GNU make
 * NuGet
@@ -52,7 +51,7 @@ You're finally ready.  You should have the following installed:
 * VSWhere
 * GNU CoreUtils (cp, rm, rmdir, ...)
 * VCPkg (https://github.com/Microsoft/vcpkg), which built and installed:
-  * ICU (at time of writing, 69.1)
+  * ICU
   * OpenSSL 3
 * SpiderMonkey 91
 

@@ -13,18 +13,27 @@
 # Sourcing variable definitions
 . ${PSScriptRoot}\variables.ps1
 
-# Exclude c:\relax from MS defender to speed up things
+# Create needed directories if not exist
+if (-not (Test-Path -Path $toolsDir)) {
+  New-Item -Path $toolsDir -ItemType Directory
+}
+if (-not (Test-Path -Path $artifactDir)) {
+  New-Item -Path $artifactDir -ItemType Directory
+}
+
+# Exclude c:\relax and tools directory from MS defender to speed up things
 Add-MpPreference -ExclusionPath "C:\relax"
+Add-MpPreference -ExclusionPath "${toolsDir}"
 
 # Install build tools - requires English language pack installed
 choco install visualstudio2022buildtools "--passive --locale en-US"
 choco install visualstudio2022-workload-vctools --package-parameters "--add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.VC.Redist.MSM --add Microsoft.Net.Component.4.8.TargetingPack"
 choco install make nssm vswhere gnuwin32-coreutils.portable
-choco install wixtoolset --version=3.11.2
-choco install nodejs --version=18.18.2
-choco install python --version=3.11.6
+choco install wixtoolset --version=3.14.1
+choco install nodejs --version=18.20.3
+choco install python --version=3.11.9
 choco install archiver --version=3.1.0
-choco install msys2 --version=20240113.0.0
+choco install msys2 --version=20240727.0.0
 
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module VSSetup -Scope CurrentUser -Force
@@ -41,15 +50,15 @@ msys2_shell.cmd -defterm -no-start -ucrt64 -lc 'pacman -Syu'
 msys2_shell.cmd -defterm -no-start -ucrt64 -lc 'pacman -S --noconfirm --needed base-devel make mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-dlfcn'
 Write-Output " ******** Finished setting up MSYS ********"
 
+# Upgrade pip
 python -m pip install --upgrade pip
-pip install --upgrade sphinx sphinxcontrib-httpdomain sphinx_rtd_theme pygments nose2 hypothesis
 
 # Hide the Download-StatusBar and improve download speed of wget-Cmdlet
 $ProgressPreference = 'SilentlyContinue'
 
 # Download and install Erlang/OTP
 Write-Output "Downloading Erlang ..."
-Invoke-WebRequest -Uri $erlBuildUri -OutFile $erlBuildFile
+Invoke-WebRequest -Uri $erlBuildUri -OutFile "$erlBuildFile"
 Write-Output "Installing Erlang ..."
 Start-Process -Wait -Filepath "$erlBuildFile" -ArgumentList "/S /D=${erlInstallPath}"
 
@@ -63,36 +72,34 @@ Expand-Archive -Path $elxBuildFile -DestinationPath $elxInstallPath
 Write-Output "Downloading VCPkg ..."
 Invoke-WebRequest -Uri $vcpkgUri -OutFile $vcpkgFile
 Write-Output "Installing VCPkg ..."
-arc unarchive $vcpkgFile
-copy -Recurse -Force "vcpkg-${vcpkgVersion}" $vcpkgInstallPath
+arc unarchive $vcpkgFile $toolsDir
 & "${vcpkgInstallPath}\bootstrap-vcpkg.bat" -disableMetrics
 $vcpkg = "${vcpkgInstallPath}\vcpkg"
-& $vcpkg integrate install --triplet x64-windows
+& $vcpkg integrate install
 
 Write-Output "Installing ICU ..."
-& $vcpkg install icu --triplet x64-windows
+& $vcpkg install icu
 
 Write-Output "Installing OpenSSL ..."
-& $vcpkg install openssl --triplet x64-windows
+& $vcpkg install openssl
 
 # Download and install SpiderMonkey
 Write-Output "Downloading SpiderMonkey ..."
 Invoke-WebRequest -Uri $smBuildUri -OutFile $smBuildFile
 Write-Output "Installing SpiderMonkey ..."
-arc unarchive $smBuildFile
-copy -Recurse -Force "$smBuild\*" $vcpkgBase
+arc unarchive $smBuildFile $toolsDir
 
 # Download and install Java 8
 Write-Output "Downloading OpenJDK 8 ..."
 Invoke-WebRequest -Uri $java8BuildUri -OutFile $java8BuildFile
 Write-Output "Installing OpenJDK 8 ..."
-arc unarchive $java8BuildFile "C:\tools"
+arc unarchive $java8BuildFile "${toolsDir}"
 
-# Download and install Java 11
-Write-Output "Downloading OpenJDK 11 ..."
-Invoke-WebRequest -Uri $java11BuildUri -OutFile $java11BuildFile
-Write-Output "Installing OpenJDK 11 ..."
-arc unarchive $java11BuildFile "C:\tools"
+# Download and install Java 21
+Write-Output "Downloading OpenJDK 21 ..."
+Invoke-WebRequest -Uri $java21BuildUri -OutFile $java21BuildFile
+Write-Output "Installing OpenJDK 21 ..."
+arc unarchive $java21BuildFile "${toolsDir}"
 
 # we know what we are doing (, do we really?)
 Set-ExecutionPolicy Bypass -Scope CurrentUser -Force
