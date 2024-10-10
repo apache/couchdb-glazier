@@ -44,6 +44,9 @@ python -m pip install sphinx docutils pygments
 ```
 
 For Cygwin, install the 32bit version.
+```dos
+setup-x86 --allow-unsupported-windows --site http://ctm.crouchingtigerhiddenfruitbat.org/pub/cygwin/circa/2022/11/23/063457
+```
 
 Required packages:
 
