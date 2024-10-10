@@ -35,12 +35,18 @@ These packages install silently, without intervention. Cut and paste them
 into an **Administrator** command prompt.
 
 ```dos
-cinst -y git 7zip.commandline StrawberryPerl nasm wixtoolset python aria2 nodejs.install make
-cinst -y nssm --version 2.24.101-g897c7ad --x86
-pip install sphinx docutils pygments
+choco install -y git 7zip.commandline StrawberryPerl nasm wixtoolset aria2 make
+choco install -y nodejs.install --version=12.22.12
+choco install -y python --version=3.8.7
+choco install -y nssm --version 2.24.101-g897c7ad --x86
+python -m ensurepip --upgrade
+python -m pip install sphinx docutils pygments
 ```
 
 For Cygwin, install the 32bit version.
+```dos
+setup-x86 --allow-unsupported-windows --site http://ctm.crouchingtigerhiddenfruitbat.org/pub/cygwin/circa/2022/11/23/063457
+```
 
 Required packages:
 
