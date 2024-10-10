@@ -39,7 +39,8 @@ choco install -y git 7zip.commandline StrawberryPerl nasm wixtoolset aria2 make
 choco install -y nodejs.install --version=12.22.12
 choco install -y python --version=3.8.7
 choco install -y nssm --version 2.24.101-g897c7ad --x86
-pip install sphinx docutils pygments
+python -m ensurepip --upgrade
+python -m pip install sphinx docutils pygments
 ```
 
 For Cygwin, install the 32bit version.
