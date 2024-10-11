@@ -146,6 +146,9 @@ Open a new `CouchDB SDK Prompt` and run the following:
 cd c:\relax
 git config --global core.autocrlf input
 git clone https://github.com/apache/couchdb-glazier
+cd couchdb-glazier
+git checkout wip/2.x-win32
+cd ..
 aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt
 color 1f
 ```
