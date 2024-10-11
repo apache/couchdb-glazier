@@ -95,6 +95,8 @@ button, and tick the `Run as administrator` checkbox. Click OK twice.
 
 I suggest you pin it to the Start menu. We'll use this all the time.
 
+Install Windows SDK 8.1 from the Microsoft SDK Archive.
+
 Start a CouchDB SDK Prompt window and run 
 `where cl mc mt link lc rc nmake make`. Make sure the output matches the
 following:
