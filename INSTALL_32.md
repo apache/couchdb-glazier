@@ -189,6 +189,12 @@ cd %RELAX%\bin && build_curl_32.cmd
 
 ## Build 32-bit ICU
 
+Prerequisites: 
+* Open C:\relax\icu\source\allinone\allinone.sln in Visual Studio (17)
+* Select all projects, right-click "Properties" - "VC++ Directories"
+* "Include Directories": Add path to ucrt folder, e.g. C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt
+* "Include Libraries": Add path to ucrt folder, e.g. C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\ucrt\x86
+    
 In the same `CouchDB SDK Prompt` run the following:
 
 ```dos
