@@ -198,9 +198,11 @@ Close the window.
 
 Note: If this shell script hasn't been able to build all these tools successfully, try the following: 
 * Open C:\relax\icu\source\allinone\allinone.sln in Visual Studio (17)
+* Set Release Mode
 * Select all projects, right-click "Properties" - "VC++ Directories"
 * "Include Directories": Add path to ucrt folder, e.g. C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt
 * "Include Libraries": Add path to ucrt folder, e.g. C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\ucrt\x86
+* Run from menu "Build" - "Rebuild Solution"
 
 ## Start a UNIX-friendly shell with MS compilers
 
