@@ -125,7 +125,7 @@ mkdir c:\relax
 cd c:\relax
 rd /s/q SDK VC nasm inno5 nsis strawberry
 mklink /j c:\relax\bin c:\relax\couchdb-glazier\bin
-mklink /j c:\relax\nasm "c:\Program Files (x86)\NASM"
+mklink /j c:\relax\nasm "c:\Program Files (x86)\NASM" //this could also be "c:\Program Files\NASM"
 mklink /j c:\relax\SDK "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A"
 mklink /j c:\relax\VC "C:\Program Files (x86)\Microsoft Visual Studio 12.0"
 mklink /j c:\openssl c:\relax\openssl
