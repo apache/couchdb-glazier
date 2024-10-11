@@ -152,7 +152,10 @@ cd ..
 aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt
 color 1f
 ```
-
+You can try it with additional arguments if aria2c downloads fail:
+```dos
+aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt --async-dns-server=8.8.8.8,8.8.4.4 --disable-ipv6 --max-tries=10 --log-level=debug --log=aria2c.log
+```
 As of 2017-07-08, this will download the source for the following versions of our dependencies:
 
 * MS Visual C++ x86 Redistributable for VC12 with patches
