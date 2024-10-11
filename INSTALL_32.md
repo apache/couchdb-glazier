@@ -50,7 +50,7 @@ setup-x86 --allow-unsupported-windows --site http://ctm.crouchingtigerhiddenfrui
 
 Required packages:
 
-- cyg-get
+- cyg-get (install apt-cyg with wget in the cygwin console if cyg-get cannot be found)
 - p7zip
 - autoconf
 - binutils
