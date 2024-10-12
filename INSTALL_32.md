@@ -268,6 +268,7 @@ export PATH=/cygdrive/c/relax/VC/VC/bin:$PATH
 ```bash
 source ~/.bashrc
 ```
+* Check your paths again. Run `which cl link mc lc mt nmake rc`.
 
 Now you can proceed to build Erlang, closing the window when
 done:
