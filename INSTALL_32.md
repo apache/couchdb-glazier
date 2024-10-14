@@ -198,6 +198,7 @@ cd %RELAX%\bin && build_icu_32.cmd
 Close the window.
 
 Note: If this shell script hasn't been able to build all these tools successfully, try the following: 
+* Install Windows SDK 8.1 with Visual Studio Installer if required
 * Open C:\relax\icu\source\allinone\allinone.sln in Visual Studio (17)
 * Set Release Mode
 * Select all projects, right-click "Properties" - "VC++ Directories"
