@@ -246,6 +246,8 @@ The output should match the following:
 
 If it does not, stop and diagnose..
 
+Note: If you are not using a Visual Studio version and the Windows SDK, you may need to modify the shell_32.sh file and set the path to the compiler cl, link, nmake and lc correctly.
+
 Now you can proceed to build Erlang, closing the window when
 done:
 
