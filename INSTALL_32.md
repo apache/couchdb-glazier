@@ -72,6 +72,7 @@ Required packages:
 - util-linux
 - wget
 
+edit: I installed some more compilers like mingw i686 gcc-core gcc++ to get the erlang compilation working
 *Note: Do NOT install curl or help2man inside CygWin!*
 *Note: If you have problems compiling erlang, I recommend you check most of the devel packages and hope for the best!*
 
@@ -243,32 +244,6 @@ The output should match the following:
 ```
 
 If it does not, stop and diagnose..
-
-For example, the tools cl, link and nmake may not be found. In this case, the sym links must be created manually:
-
-* Create the Directory: Ensure the directory /cygdrive/c/relax/VC/VC/bin exists. If not, create it:
-```bash
-mkdir -p /cygdrive/c/relax/VC/VC/bin
-```
-* Create Symbolic Links: Use the ln -s command to create symbolic links in the /cygdrive/c/relax/VC/VC/bin directory pointing to the actual tools:
-```bash
-ln -s "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/<Edition>/VC/Tools/MSVC/<Version>/bin/Hostx64/x64/cl.exe" /cygdrive/c/relax/VC/VC/bin/cl
-ln -s "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/<Edition>/VC/Tools/MSVC/<Version>/bin/Hostx64/x64/nmake.exe" /cygdrive/c/relax/VC/VC/bin/nmake
-ln -s "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/<Edition>/VC/Tools/MSVC/<Version>/bin/Hostx64/x64/link.exe" /cygdrive/c/relax/VC/VC/bin/link
-```
-* Verify the Links: Check if the symbolic links are created correctly:
-```bash
-ls -l /cygdrive/c/relax/VC/VC/bin
-```
-* Update PATH: Ensure that /cygdrive/c/relax/VC/VC/bin is in your PATH environment variable. You can add it to your .bashrc or .bash_profile:
-```bash
-export PATH=/cygdrive/c/relax/VC/VC/bin:$PATH
-```
-* Reload Configuration: Reload your shell configuration:
-```bash
-source ~/.bashrc
-```
-* Check your paths again. Run `which cl link mc lc mt nmake rc`.
 
 Now you can proceed to build Erlang, closing the window when
 done:
