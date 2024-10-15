@@ -35,16 +35,22 @@ These packages install silently, without intervention. Cut and paste them
 into an **Administrator** command prompt.
 
 ```dos
-cinst -y git 7zip.commandline StrawberryPerl nasm wixtoolset python aria2 nodejs.install make
-cinst -y nssm --version 2.24.101-g897c7ad --x86
-pip install sphinx docutils pygments
+choco install -y git 7zip.commandline StrawberryPerl nasm wixtoolset aria2 make
+choco install -y nodejs.install --version=12.22.12
+choco install -y python --version=3.8.7
+choco install -y nssm --version 2.24.101-g897c7ad --x86
+python -m ensurepip --upgrade
+python -m pip install sphinx docutils pygments
 ```
 
 For Cygwin, install the 32bit version.
+```dos
+setup-x86 --allow-unsupported-windows --site http://ctm.crouchingtigerhiddenfruitbat.org/pub/cygwin/circa/2022/11/23/063457
+```
 
 Required packages:
 
-- cyg-get
+- cyg-get (install apt-cyg with wget in the cygwin console if cyg-get cannot be found)
 - p7zip
 - autoconf
 - binutils
@@ -66,6 +72,7 @@ Required packages:
 - util-linux
 - wget
 
+edit: I installed some more compilers like mingw i686 gcc-core gcc++ to get the erlang compilation working
 *Note: Do NOT install curl or help2man inside CygWin!*
 *Note: If you have problems compiling erlang, I recommend you check most of the devel packages and hope for the best!*
 
@@ -88,6 +95,8 @@ Right-click on the icon, select Properties, click the `Advanced...`
 button, and tick the `Run as administrator` checkbox. Click OK twice.
 
 I suggest you pin it to the Start menu. We'll use this all the time.
+
+Install Windows SDK 8.1 from the Microsoft SDK Archive.
 
 Start a CouchDB SDK Prompt window and run 
 `where cl mc mt link lc rc nmake make`. Make sure the output matches the
@@ -117,7 +126,7 @@ mkdir c:\relax
 cd c:\relax
 rd /s/q SDK VC nasm inno5 nsis strawberry
 mklink /j c:\relax\bin c:\relax\couchdb-glazier\bin
-mklink /j c:\relax\nasm "c:\Program Files (x86)\NASM"
+mklink /j c:\relax\nasm "c:\Program Files (x86)\NASM" //this could also be "c:\Program Files\NASM"
 mklink /j c:\relax\SDK "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A"
 mklink /j c:\relax\VC "C:\Program Files (x86)\Microsoft Visual Studio 12.0"
 mklink /j c:\openssl c:\relax\openssl
@@ -138,10 +147,16 @@ Open a new `CouchDB SDK Prompt` and run the following:
 cd c:\relax
 git config --global core.autocrlf input
 git clone https://github.com/apache/couchdb-glazier
+cd couchdb-glazier
+git checkout wip/2.x-win32
+cd ..
 aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt
 color 1f
 ```
-
+You can try it with additional arguments if aria2c downloads fail:
+```dos
+aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt --async-dns-server=8.8.8.8,8.8.4.4 --disable-ipv6 --max-tries=10 --log-level=debug --log=aria2c.log
+```
 As of 2017-07-08, this will download the source for the following versions of our dependencies:
 
 * MS Visual C++ x86 Redistributable for VC12 with patches
@@ -174,14 +189,22 @@ cd %RELAX%\bin && build_curl_32.cmd
 ```
 
 ## Build 32-bit ICU
-
+    
 In the same `CouchDB SDK Prompt` run the following:
 
 ```dos
 cd %RELAX%\bin && build_icu_32.cmd
 ```
-
 Close the window.
+
+Note: If this shell script hasn't been able to build all these tools successfully, try the following: 
+* Install Windows SDK 8.1 with Visual Studio Installer if required
+* Open C:\relax\icu\source\allinone\allinone.sln in Visual Studio (17)
+* Set Release Mode
+* Select all projects, right-click "Properties" - "VC++ Directories"
+* "Include Directories": Add path to ucrt folder, e.g. C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt
+* "Include Libraries": Add path to ucrt folder, e.g. C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\ucrt\x86
+* Run from menu "Build" - "Rebuild Solution"
 
 ## Start a UNIX-friendly shell with MS compilers
 
@@ -221,7 +244,9 @@ The output should match the following:
 /cygdrive/c/Program Files (x86)/Windows Kits/8.1/bin/x86/rc
 ```
 
-If it does not, stop and diagnose.
+If it does not, stop and diagnose..
+
+Note: If you are not using a Visual Studio version and the Windows SDK, you may need to modify the shell_32.sh file and set the path to the compiler cl, link, nmake and lc correctly.
 
 Now you can proceed to build Erlang, closing the window when
 done:
