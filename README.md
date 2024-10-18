@@ -50,6 +50,8 @@ You're finally ready.  You should have the following installed:
 * VSSetup
 * VSWhere
 * GNU CoreUtils (cp, rm, rmdir, ...)
+* MSYS2 (for building QuickJS)
+* Java (for building Nouveau)
 * VCPkg (https://github.com/Microsoft/vcpkg), which built and installed:
   * ICU
   * OpenSSL 3
@@ -97,8 +99,24 @@ The installer will be placed in your current working directory.
 
 You made it! Time to relax. :D
 
-If you're a release engineer, you may find the following commands useful too:
+If you're a release engineer, the script `download_extract_rc.ps1` in
+the `bin\` directory helps you to download, check and extract a 
+CouchDB source tarball.
 
+```
+SYNTAX
+    C:\relax\couchdb-glazier\bin\download_extract_rc.ps1 [[-CouchDBVersion] <String>] [[-ReleaseCandidate] <String>] [[-Path] <String>] [<CommonParameters>]
+
+    
+DESCRIPTION
+    This command downloads, checks and extract a CouchDB source tarball
+
+    -CouchDBVersion <string>        CouchDB version number to download (e.g. 3.4.2)
+    -ReleaseCandidate <string>      Release candidate version number (e.g. rc1)
+    -Path <string>                  Directory to store the artifacts (e.g. C:\relax\releases)
+```
+
+To checksum a source tarball, you may find the following commands useful too:
 ```
 checksum -t sha256 apache-couchdb.#.#.#-RC#.tar.gz
 checksum -t sha512 apache-couchdb.#.#.#-RC#.tar.gz
