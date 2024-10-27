@@ -150,13 +150,10 @@ git clone https://github.com/apache/couchdb-glazier
 cd couchdb-glazier
 git checkout wip/2.x-win32
 cd ..
-aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt
+aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt --async-dns-server=8.8.8.8,8.8.4.4 --disable-ipv6 --max-tries=10 --log-level=debug --log=aria2c.log
 color 1f
 ```
-You can try it with additional arguments if aria2c downloads fail:
-```dos
-aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt --async-dns-server=8.8.8.8,8.8.4.4 --disable-ipv6 --max-tries=10 --log-level=debug --log=aria2c.log
-```
+
 As of 2017-07-08, this will download the source for the following versions of our dependencies:
 
 * MS Visual C++ x86 Redistributable for VC12 with patches
@@ -246,7 +243,11 @@ The output should match the following:
 
 If it does not, stop and diagnose..
 
-Note: If you are not using a Visual Studio version and the Windows SDK, you may need to modify the shell_32.sh file and set the path to the compiler cl, link, nmake and lc correctly.
+At this point u should change the used autoconf version by entering the following
+```bash
+export WANT_AUTOCONF=2.69
+```
+
 
 Now you can proceed to build Erlang, closing the window when
 done:
