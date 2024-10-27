@@ -222,7 +222,7 @@ At the bash prompt, enter the following commands:
 
 ```bash
 ln -s /cygdrive/c/relax /relax
-cd .. && tar xzf /relax/bits/otp_src_19.3.tar.gz
+cd .. && tar xzf /relax/bits/otp_src_18.3.tar.gz
 cd $ERL_TOP
 echo "skipping gs" > lib/gs/SKIP
 echo "skipping wx" > lib/wx/SKIP
