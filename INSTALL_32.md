@@ -11,14 +11,16 @@ dependencies within the same runtime.
 We hope Glazier simplifies using Erlang and CouchDB for you, giving
 a consistent, repeatable build environment.
 
+With this tutorial you will be able to create a Win32 installer for CouchDB 2.0.1. 
+The Apache archive contains 32-bit installers for CouchDB 1.7.1. However, this version does not yet support clustering, which has many features for the stable operation of a distributed database. 
 
 # Base Requirements
-
-- 64-bit Windows 7 or 8.1. *This is required for Mozilla build setup*.
-  - We like 64-bit Windows 7, 8.1 or 10 Enterprise N (missing Media Player, etc.) from MSDN.
-- If prompted, reboot after installing the .NET framework.
+- Its highly recommended to use 64-bit Windows 10 with this tutorial
+- Windows SDK 8.1 from the Microsoft SDK Archive. *This is required for Mozilla build setup*.
+  - If prompted, reboot after installing the .NET framework.
 - [Visual Studio 2013 x86 Community Edition](https://www.visualstudio.com/vs/older-downloads/) installed on the *C: drive*. Downloading requires a free Dev Essentials subscription from Microsoft.
 - [Chocolatey](https://chocolatey.org). From an *administrative* __cmd.exe__ command prompt, run:
+
 
 ```dos
 @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
@@ -35,16 +37,23 @@ These packages install silently, without intervention. Cut and paste them
 into an **Administrator** command prompt.
 
 ```dos
-cinst -y git 7zip.commandline StrawberryPerl nasm wixtoolset python aria2 nodejs.install make
-cinst -y nssm --version 2.24.101-g897c7ad --x86
-pip install sphinx docutils pygments
+choco install -y git 7zip.commandline StrawberryPerl nasm wixtoolset aria2 make
+choco install -y nodejs.install --version=12.22.12
+choco install -y python --version=3.8.7
+choco install -y nssm --version 2.24.101-g897c7ad --x86
+python -m ensurepip --upgrade
+python -m pip install sphinx docutils pygments
 ```
+After that make sure the bin folder of your wixtoolset installation is added to PATH.
 
 For Cygwin, install the 32bit version.
+```dos
+setup-x86 --allow-unsupported-windows --site http://ctm.crouchingtigerhiddenfruitbat.org/pub/cygwin/circa/2022/11/23/063457
+```
 
 Required packages:
 
-- cyg-get
+- apt-cyg
 - p7zip
 - autoconf
 - binutils
@@ -66,6 +75,7 @@ Required packages:
 - util-linux
 - wget
 
+*Important: Check whether all packages have been installed by running the Cygwin Install again and all packages are present in the “Full” setting*
 *Note: Do NOT install curl or help2man inside CygWin!*
 *Note: If you have problems compiling erlang, I recommend you check most of the devel packages and hope for the best!*
 
@@ -117,14 +127,12 @@ mkdir c:\relax
 cd c:\relax
 rd /s/q SDK VC nasm inno5 nsis strawberry
 mklink /j c:\relax\bin c:\relax\couchdb-glazier\bin
-mklink /j c:\relax\nasm "c:\Program Files (x86)\NASM"
+mklink /j c:\relax\nasm "c:\Program Files (x86)\NASM" //this could also be "c:\Program Files\NASM"
 mklink /j c:\relax\SDK "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A"
 mklink /j c:\relax\VC "C:\Program Files (x86)\Microsoft Visual Studio 12.0"
 mklink /j c:\openssl c:\relax\openssl
 setx RELAX c:\relax
 ```
-
-*Note: The SDK version might vary base on your OS. This was done with Windows 10 Professional*
 
 Close all open command prompts. Now we're ready to go!
 
@@ -138,7 +146,10 @@ Open a new `CouchDB SDK Prompt` and run the following:
 cd c:\relax
 git config --global core.autocrlf input
 git clone https://github.com/apache/couchdb-glazier
-aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt
+cd couchdb-glazier
+git checkout wip/2.x-win32
+cd ..
+aria2c --force-sequential=false --max-connection-per-server=5 --check-certificate=false --auto-file-renaming=false --allow-overwrite=true --input-file=couchdb-glazier/downloads_32.md --max-concurrent-downloads=5 --dir=bits --save-session=bits/a2session.txt --async-dns-server=8.8.8.8,8.8.4.4 --disable-ipv6 --max-tries=10 --log-level=debug --log=aria2c.log
 color 1f
 ```
 
@@ -153,7 +164,8 @@ As of 2017-07-08, this will download the source for the following versions of ou
   * 19.3
 * ICU4C 57.1 (*Note*: this is the last version to support building in VS2013)
 * SpiderMonkey 1.8.5
-
+  
+*Note: Some packages like ICU4C 57.1 and curl 7.49.1 have to be downloaded directly from the website and copied to the folder C:/relax/bits, as not all links are valid anymore*
 
 ## Build & Test 32-bit OpenSSL
 
@@ -172,15 +184,15 @@ Open a new `CouchDB SDK Prompt` and run the following:
 ```dos
 cd %RELAX%\bin && build_curl_32.cmd
 ```
+*Note: Rename the folder C:/relax/curl-7.49.1 to C:/relax/curl*
 
 ## Build 32-bit ICU
-
+    
 In the same `CouchDB SDK Prompt` run the following:
 
 ```dos
 cd %RELAX%\bin && build_icu_32.cmd
 ```
-
 Close the window.
 
 ## Start a UNIX-friendly shell with MS compilers
@@ -221,7 +233,12 @@ The output should match the following:
 /cygdrive/c/Program Files (x86)/Windows Kits/8.1/bin/x86/rc
 ```
 
-If it does not, stop and diagnose.
+If it does not, stop and diagnose..
+
+At this point u should change the used autoconf version by entering the following
+```bash
+export WANT_AUTOCONF=2.69
+```
 
 Now you can proceed to build Erlang, closing the window when
 done:
