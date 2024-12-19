@@ -44,8 +44,8 @@ $elxInstallPath = "${toolsDir}\${elxDir}"
 # SPIDERMONKEY SETTINGS
 
 # Download location of the pre-build SpiderMonkey development files for Windows (x64)
-$smBuild = "Windows-mozjs-91"
-$smBuildVersion = "0.0.6"
+$smBuild = "Windows-mozjs-128"
+$smBuildVersion = "0.0.9"
 $smBuildUri = "https://github.com/big-r81/couchdb-sm/releases/download/v${smBuildVersion}/${smBuild}.tar.xz"
 $smBuildFile = "${artifactDir}\$(Split-Path $smBuildUri -Leaf)"
 $smInstallPath = "${toolsDir}\${smBuild}"
@@ -53,13 +53,13 @@ $smInstallPath = "${toolsDir}\${smBuild}"
 # JAVA 8 SETTINGS
 
 # Donwload location of OpenJDK 8 for Windows (x64)
-$java8Build = "zulu8.80.0.17-ca-jdk8.0.422-win_x64"
+$java8Build = "zulu8.82.0.21-ca-jdk8.0.432-win_x64"
 $java8BuildUri = "https://cdn.azul.com/zulu/bin/$java8Build.zip"
 $java8BuildFile = "${artifactDir}\$(Split-Path $java8BuildUri -Leaf)"
 
 # JAVA 21 SETTINGS
 
 # Donwload location of OpenJDK 21 for Windows (x64)
-$java21Build = "zulu21.36.17-ca-jdk21.0.4-win_x64"
+$java21Build = "zulu21.38.21-ca-jdk21.0.5-win_x64"
 $java21BuildUri = "https://cdn.azul.com/zulu/bin/$java21Build.zip"
 $java21BuildFile = "${artifactDir}\$(Split-Path $java21BuildUri -Leaf)"
