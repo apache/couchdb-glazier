@@ -22,13 +22,14 @@ Param(
     [string]$MSIFile
     )
 
-# EDIT BOTH VARIABLES ###################################################
-$Storepass = '<api-key>"|"<path-to-client-cert>"|"<client-cert-password>'
-$Alias = "<your-digicert-alias>"
+# EDIT ALL VARIABLES ####################################################
+$Storepass = '"<ssl.com user name>|<ssl.com password>"'
+$Alias = '<your-alias>'
+$Keypass = '<ssl.com eSigner TOTP secret>'
 #########################################################################
 
 # RFC 3161 timestamping URL
-New-Variable -Name TSAUrl -Value "http://timestamp.digicert.com" -Option Constant
+New-Variable -Name TSAUrl -Value "http://ts.ssl.com" -Option Constant
 
 # call JSign and sign file
-jsign --storetype DIGICERTONE --storepass $Storepass --alias $Alias --tsaurl $TSAUrl $MSIFile
+jsign --storetype ESIGNER --alias $Alias --storepass $Storepass --keypass $Keypass --tsaurl $TSAUrl --tsmode RFC3161 --alg SHA256 $MSIFile
