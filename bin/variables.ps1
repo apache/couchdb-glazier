@@ -35,7 +35,7 @@ $erlInstallPath = "${toolsDir}\${erlDir}"
 # ERLANG BUILD SETTINGS
 
 # Download location of the Elixir binaries for Windows (x64)
-$elxVersion = "1.15.7"
+$elxVersion = "1.17.3"
 $elxBuildUri = "https://github.com/elixir-lang/elixir/releases/download/v${elxVersion}/elixir-otp-25.zip"
 $elxBuildFile = "${artifactDir}\$(Split-Path $elxBuildUri -Leaf)"
 $elxDir = "elixir-${elxVersion}"
