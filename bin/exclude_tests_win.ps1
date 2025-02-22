@@ -44,7 +44,7 @@ $excludeTests = @(
     "src\chttpd\test\eunit\chttpd_dbs_info_test.erl",
     "src\chttpd\test\eunit\chttpd_security_tests.erl",
     "src\chttpd\test\eunit\chttpd_socket_buffer_size_test.erl",
-    "src\chttpd\test\eunit\chttpd_socket_buffer_size_test.erl"
+    "src\chttpd\test\eunit\chttpd_bulk_get_test.erl"
 )
 
 function renameFile ([string]$file, [bool]$exclude = $true) {
@@ -52,7 +52,7 @@ function renameFile ([string]$file, [bool]$exclude = $true) {
         if( Test-Path -path $file ) {
             Write-Host "$file is excluded during testing..."
             Rename-Item -path $file -NewName "$file.old"
-        }  
+        }
     } else {
         if( Test-Path -path "$file.old" ) {
             Write-Host "$file is considered during testing..."
@@ -63,7 +63,7 @@ function renameFile ([string]$file, [bool]$exclude = $true) {
 
 foreach ($test in $excludeTests)
 {
-    $file = Join-Path $Path $test
+    $file = Join-Path (Resolve-Path $Path) $test
     if($IncludeTests) {
         renameFile $file $false
     } else {
