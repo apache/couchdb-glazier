@@ -10,10 +10,32 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-# PLEASE EDIT ME AND CHANGE $CouchDB_Root to the CouchDB folder on disk ####
+<#
+.SYNOPSIS
+   Script for building the CouchDB Windows installer
+
+.DESCRIPTION
+   This command creates the Windows installer file
+
+   -IncludeGitSha    Append revision to the Windows installer file  
+   -Path <string>    Path to the CouchDB source tree directory
+
+.LINK
+    https://couchdb.apache.org/
+#>
+
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+    [ValidateNotNullOrEmpty()]
+    [string]$Path,
+
+    [switch]$IncludeGitSha = $false     #include git sha in msi file name
+)
+
 # Example:
 # $CouchDB_Root = "C:\relax\apache-couchdb-3.3.0"
-$CouchDB_Root = "PLEASE_SET_PATH_TO_COUCHDB_DIR"
+$CouchDB_Root = Resolve-Path $Path
 # ###################
 
 $CouchDB = "${CouchDB_Root}\rel\couchdb"
@@ -100,3 +122,8 @@ Pop-Location
 Move-Item -Path "${CouchDB}\etc\local.ini.dist" -Destination "${CouchDB}\etc\local.ini"
 Move-Item -Path "${CouchDB}\etc\vm.args.dist" -Destination "${CouchDB}\etc\vm.args"
 Move-Item -Path "${Glazier}\installer\apache-couchdb-${CouchDBVersion}.msi" -Destination "." -Force
+
+if($IncludeGitSha) {
+   $GitSha = (git rev-parse --short HEAD)
+   Rename-Item -Path "apache-couchdb-${CouchDBVersion}.msi" -NewName "apache-couchdb-${CouchDBVersion}-${GitSha}.msi"
+}
