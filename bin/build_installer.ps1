@@ -68,6 +68,7 @@ $Glazier = "${PSScriptRoot}\.."
 $VersionMK = Get-Content -Path "$CouchDB_Root\version.mk" | Out-String | ConvertFrom-StringData
 
 $CouchDBVersion = $VersionMK.vsn_major,$VersionMK.vsn_minor,$VersionMK.vsn_patch -join "."
+$GitSha = git rev-parse --short HEAD 2>$null
 $CouchDBDistGitSha = $VersionMK.git_sha
 $RelNotesVersion = $CouchDBVersion -replace "^(\d+\.\d+)\..*", '$1'
 
@@ -132,7 +133,6 @@ Move-Item -Path "${CouchDB}\etc\vm.args.dist" -Destination "${CouchDB}\etc\vm.ar
 Move-Item -Path "${Glazier}\installer\apache-couchdb-${CouchDBVersion}.msi" -Destination "." -Force
 
 if($IncludeGitSha) {
-   $GitSha = & git rev-parse --short HEAD 2>$null
    if ($GitSha.Length -gt 0) { # Fetch git sha from git directory itself
       Rename-Item -Path "apache-couchdb-${CouchDBVersion}.msi" -NewName "apache-couchdb-${CouchDBVersion}-${GitSha}.msi"
    } elseif ($CouchDBDistGitSha -gt 0) { # Fetch git sha from version.mk within dist directory
