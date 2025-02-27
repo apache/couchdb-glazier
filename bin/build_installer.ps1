@@ -17,8 +17,9 @@
 .DESCRIPTION
    This command creates the Windows installer file
 
-   -IncludeGitSha    Append revision to the Windows installer file  
    -Path <string>    Path to the CouchDB source tree directory
+   -IncludeGitSha    Append revision to the Windows installer file  
+   -DisableICEChecks Suppress MSI/MSM validation (Use only in CI)
 
 .LINK
     https://couchdb.apache.org/
@@ -30,7 +31,8 @@ param(
     [ValidateNotNullOrEmpty()]
     [string]$Path,
 
-    [switch]$IncludeGitSha = $false     #include git sha in msi file name
+    [switch]$IncludeGitSha = $false,    # include git sha in msi file name
+    [switch]$DisableICEChecks = $false  # disable msi validation checks in CI runs
 )
 
 # Example:
@@ -116,7 +118,12 @@ candle -arch x64 -ext WiXUtilExtension adminprompt.wxs
 candle -arch x64 -ext WiXUtilExtension cookieprompt.wxs
 candle -arch x64 -ext WiXUtilExtension customexit.wxs
 candle -arch x64 -ext WiXUtilExtension CouchInstallDirDlg.wxs
-light -sw1076 -sice:ICE17 -ext WixUIExtension -ext WiXUtilExtension "-cultures:en-us;en;neutral" adminprompt.wixobj cookieprompt.wixobj couchdb.wixobj couchdbfiles.wixobj couchdb_wixui.wixobj customexit.wixobj CouchInstallDirDlg.wixobj -out apache-couchdb-${CouchDBVersion}.msi
+
+if($DisableICEChecks) {
+   light -sval -sw1076 -sice:ICE17 -ext WixUIExtension -ext WiXUtilExtension "-cultures:en-us;en;neutral" adminprompt.wixobj cookieprompt.wixobj couchdb.wixobj couchdbfiles.wixobj couchdb_wixui.wixobj customexit.wixobj CouchInstallDirDlg.wixobj -out apache-couchdb-${CouchDBVersion}.msi
+} else {
+   light -sw1076 -sice:ICE17 -ext WixUIExtension -ext WiXUtilExtension "-cultures:en-us;en;neutral" adminprompt.wixobj cookieprompt.wixobj couchdb.wixobj couchdbfiles.wixobj couchdb_wixui.wixobj customexit.wixobj CouchInstallDirDlg.wixobj -out apache-couchdb-${CouchDBVersion}.msi
+}
 
 Pop-Location
 
