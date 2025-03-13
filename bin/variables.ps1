@@ -45,7 +45,7 @@ $elxInstallPath = "${toolsDir}\${elxDir}"
 
 # Download location of the pre-build SpiderMonkey development files for Windows (x64)
 $smBuild = "Windows-mozjs-128"
-$smBuildVersion = "0.0.9"
+$smBuildVersion = "0.0.10"
 $smBuildUri = "https://github.com/big-r81/couchdb-sm/releases/download/v${smBuildVersion}/${smBuild}.tar.xz"
 $smBuildFile = "${artifactDir}\$(Split-Path $smBuildUri -Leaf)"
 $smInstallPath = "${toolsDir}\${smBuild}"
