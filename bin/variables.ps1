@@ -17,7 +17,7 @@ $artifactDir = "${toolsDir}\ArtifactDownloads"
 # VCPKG SETTINGS
 
 # Download location of Vcpkg for Windows
-$vcpkgVersion = "2024.07.12"
+$vcpkgVersion = "2025.04.09"
 $vcpkgUri = "https://github.com/microsoft/vcpkg/archive/refs/tags/${vcpkgVersion}.zip"
 $vcpkgFile = "${artifactDir}\$(Split-Path $vcpkgUri -Leaf)"
 $vcpkgInstallPath = "${toolsDir}\vcpkg-${vcpkgVersion}"
@@ -35,8 +35,8 @@ $erlInstallPath = "${toolsDir}\${erlDir}"
 # ERLANG BUILD SETTINGS
 
 # Download location of the Elixir binaries for Windows (x64)
-$elxVersion = "1.17.3"
-$elxBuildUri = "https://github.com/elixir-lang/elixir/releases/download/v${elxVersion}/elixir-otp-25.zip"
+$elxVersion = "1.18.3"
+$elxBuildUri = "https://github.com/elixir-lang/elixir/releases/download/v${elxVersion}/elixir-otp-26.zip"
 $elxBuildFile = "${artifactDir}\$(Split-Path $elxBuildUri -Leaf)"
 $elxDir = "elixir-${elxVersion}"
 $elxInstallPath = "${toolsDir}\${elxDir}"
@@ -45,7 +45,7 @@ $elxInstallPath = "${toolsDir}\${elxDir}"
 
 # Download location of the pre-build SpiderMonkey development files for Windows (x64)
 $smBuild = "Windows-mozjs-128"
-$smBuildVersion = "0.0.10"
+$smBuildVersion = "0.0.11"
 $smBuildUri = "https://github.com/big-r81/couchdb-sm/releases/download/v${smBuildVersion}/${smBuild}.tar.xz"
 $smBuildFile = "${artifactDir}\$(Split-Path $smBuildUri -Leaf)"
 $smInstallPath = "${toolsDir}\${smBuild}"
@@ -53,13 +53,13 @@ $smInstallPath = "${toolsDir}\${smBuild}"
 # JAVA 8 SETTINGS
 
 # Donwload location of OpenJDK 8 for Windows (x64)
-$java8Build = "zulu8.82.0.21-ca-jdk8.0.432-win_x64"
+$java8Build = "zulu8.86.0.25-ca-jdk8.0.452-win_x64"
 $java8BuildUri = "https://cdn.azul.com/zulu/bin/$java8Build.zip"
 $java8BuildFile = "${artifactDir}\$(Split-Path $java8BuildUri -Leaf)"
 
 # JAVA 21 SETTINGS
 
 # Donwload location of OpenJDK 21 for Windows (x64)
-$java21Build = "zulu21.38.21-ca-jdk21.0.5-win_x64"
+$java21Build = "zulu21.42.19-ca-jdk21.0.7-win_x64"
 $java21BuildUri = "https://cdn.azul.com/zulu/bin/$java21Build.zip"
 $java21BuildFile = "${artifactDir}\$(Split-Path $java21BuildUri -Leaf)"
