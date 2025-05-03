@@ -35,7 +35,6 @@ $env:PATH += ";${elxInstallPath}\bin"
 $env:PATH += ";${vcpkgBase}\bin"
 $env:PATH += ";${env:wix}\bin"
 $env:PATH += ";${smInstallPath}\bin"
-$env:PATH += ";${toolsDir}\${java21Build}\bin"
 $env:PATH += ";${toolsDir}\msys64;${toolsDir}\msys64\ucrt64\bin"
 
 $env:LIB = "${vcpkgBase}\lib;${smInstallPath}\lib;" + $env:LIB
