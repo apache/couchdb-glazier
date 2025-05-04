@@ -16,6 +16,7 @@ github:
     - powershell
   features:
     issues: true
+  del_branch_on_merge: true
   protected_branches:
     main:
       required_status_checks:
