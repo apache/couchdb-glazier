@@ -26,7 +26,7 @@ $vcpkgBase = "${vcpkgInstallPath}\installed\x64-windows"
 # ERLANG BUILD SETTINGS
 
 # Download location of the Erlang/OTP Environment for Windows (x64)
-$erlVersion = "26.2.5.11"
+$erlVersion = "26.2.5.15"
 $erlBuildUri = "https://github.com/erlang/otp/releases/download/OTP-${erlVersion}/otp_win64_${erlVersion}.exe"
 $erlBuildFile = "${artifactDir}\$(Split-Path $erlBuildUri -Leaf)"
 $erlDir = "erl-${erlVersion}"
@@ -60,6 +60,6 @@ $java8BuildFile = "${artifactDir}\$(Split-Path $java8BuildUri -Leaf)"
 # JAVA 21 SETTINGS
 
 # Donwload location of OpenJDK 21 for Windows (x64)
-$java21Build = "zulu21.42.19-ca-jdk21.0.7-win_x64"
+$java21Build = "zulu21.46.19-ca-jdk21.0.9-win_x64"
 $java21BuildUri = "https://cdn.azul.com/zulu/bin/$java21Build.zip"
 $java21BuildFile = "${artifactDir}\$(Split-Path $java21BuildUri -Leaf)"
