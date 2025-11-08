@@ -26,7 +26,7 @@ $vcpkgBase = "${vcpkgInstallPath}\installed\x64-windows"
 # ERLANG BUILD SETTINGS
 
 # Download location of the Erlang/OTP Environment for Windows (x64)
-$erlVersion = "26.2.5.15"
+$erlVersion = "26.2.5.16"
 $erlBuildUri = "https://github.com/erlang/otp/releases/download/OTP-${erlVersion}/otp_win64_${erlVersion}.exe"
 $erlBuildFile = "${artifactDir}\$(Split-Path $erlBuildUri -Leaf)"
 $erlDir = "erl-${erlVersion}"
@@ -45,7 +45,7 @@ $elxInstallPath = "${toolsDir}\${elxDir}"
 
 # Download location of the pre-build SpiderMonkey development files for Windows (x64)
 $smBuild = "Windows-mozjs-128"
-$smBuildVersion = "0.0.11"
+$smBuildVersion = "0.0.13"
 $smBuildUri = "https://github.com/big-r81/couchdb-sm/releases/download/v${smBuildVersion}/${smBuild}.tar.xz"
 $smBuildFile = "${artifactDir}\$(Split-Path $smBuildUri -Leaf)"
 $smInstallPath = "${toolsDir}\${smBuild}"
