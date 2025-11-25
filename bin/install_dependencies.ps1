@@ -89,12 +89,6 @@ Invoke-WebRequest -Uri $smBuildUri -OutFile $smBuildFile
 Write-Output "Installing SpiderMonkey ..."
 arc unarchive $smBuildFile $toolsDir
 
-# Download and install Java 8
-Write-Output "Downloading OpenJDK 8 ..."
-Invoke-WebRequest -Uri $java8BuildUri -OutFile $java8BuildFile
-Write-Output "Installing OpenJDK 8 ..."
-arc unarchive $java8BuildFile "${toolsDir}"
-
 # Download and install Java 21
 Write-Output "Downloading OpenJDK 21 ..."
 Invoke-WebRequest -Uri $java21BuildUri -OutFile $java21BuildFile

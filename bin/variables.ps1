@@ -50,13 +50,6 @@ $smBuildUri = "https://github.com/big-r81/couchdb-sm/releases/download/v${smBuil
 $smBuildFile = "${artifactDir}\$(Split-Path $smBuildUri -Leaf)"
 $smInstallPath = "${toolsDir}\${smBuild}"
 
-# JAVA 8 SETTINGS
-
-# Donwload location of OpenJDK 8 for Windows (x64)
-$java8Build = "zulu8.86.0.25-ca-jdk8.0.452-win_x64"
-$java8BuildUri = "https://cdn.azul.com/zulu/bin/$java8Build.zip"
-$java8BuildFile = "${artifactDir}\$(Split-Path $java8BuildUri -Leaf)"
-
 # JAVA 21 SETTINGS
 
 # Donwload location of OpenJDK 21 for Windows (x64)
