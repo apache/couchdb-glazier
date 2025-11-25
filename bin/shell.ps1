@@ -45,5 +45,8 @@ $env:LIBPATH = "${vcpkgBase}\lib;${smInstallPath}\lib;" + $env:LIBPATH
 $env:JAVA_HOME = "${toolsDir}\${java21Build}"
 $env:PATH += ";${env:JAVA_HOME}\bin"
 
-# Needed for Closeau
-$env:CLOUSEAU_JAVA_HOME = "${toolsDir}\${java8Build}"
+# Needed for Closeau:
+# This is the same as for Nouveau for the moment, but perhaps it is better to
+# keep it separate as there is no guarantee that they will be bumped at the
+# same pace.
+$env:CLOUSEAU_JAVA_HOME = "${toolsDir}\${java21Build}"
