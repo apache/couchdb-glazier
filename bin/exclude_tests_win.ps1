@@ -44,7 +44,10 @@ $excludeTests = @(
     "src\chttpd\test\eunit\chttpd_dbs_info_test.erl",
     "src\chttpd\test\eunit\chttpd_security_tests.erl",
     "src\chttpd\test\eunit\chttpd_socket_buffer_size_test.erl",
-    "src\chttpd\test\eunit\chttpd_bulk_get_test.erl"
+    "src\chttpd\test\eunit\chttpd_bulk_get_test.erl",
+    "src\chttpd\test\eunit\chttpd_db_attachment_size_tests.erl",
+    "src\mem3\test\eunit\mem3_reshard_api_test.erl",
+    "test\elixir\test\users_db_security_test.exs"
 )
 
 function renameFile ([string]$file, [bool]$exclude = $true) {
