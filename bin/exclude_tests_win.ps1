@@ -53,12 +53,12 @@ $excludeTests = @(
 function renameFile ([string]$file, [bool]$exclude = $true) {
     if($exclude) {
         if( Test-Path -path $file ) {
-            Write-Host "$file is excluded during testing..."
+            Write-Output "$file is excluded during testing..."
             Rename-Item -path $file -NewName "$file.old"
         }
     } else {
         if( Test-Path -path "$file.old" ) {
-            Write-Host "$file is considered during testing..."
+            Write-Output "$file is considered during testing..."
             Rename-Item -path "$file.old" -NewName "$file"
         }
     }
@@ -66,6 +66,7 @@ function renameFile ([string]$file, [bool]$exclude = $true) {
 
 foreach ($test in $excludeTests)
 {
+    Write-Out "Path: $Path"
     $file = Join-Path (Resolve-Path $Path) $test
     if($IncludeTests) {
         renameFile $file $false
