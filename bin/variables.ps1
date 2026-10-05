@@ -26,7 +26,7 @@ $vcpkgBase = "${vcpkgInstallPath}\installed\x64-windows"
 # ERLANG BUILD SETTINGS
 
 # Download location of the Erlang/OTP Environment for Windows (x64)
-$erlVersion = "27.3.4.17"
+$erlVersion = "27.3.4.18"
 $erlBuildUri = "https://github.com/erlang/otp/releases/download/OTP-${erlVersion}/otp_win64_${erlVersion}.exe"
 $erlBuildFile = "${artifactDir}\$(Split-Path $erlBuildUri -Leaf)"
 $erlDir = "erl-${erlVersion}"
