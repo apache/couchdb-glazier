@@ -53,6 +53,6 @@ $smInstallPath = "${toolsDir}\${smBuild}"
 # JAVA 21 SETTINGS
 
 # Donwload location of OpenJDK 21 for Windows (x64)
-$java21Build = "zulu21.54.109-ca-jdk21.0.13.0.3-win_x64"
+$java21Build = "zulu21.54.201-ca-jdk21.0.13.1-win_x64"
 $java21BuildUri = "https://cdn.azul.com/zulu/bin/$java21Build.zip"
 $java21BuildFile = "${artifactDir}\$(Split-Path $java21BuildUri -Leaf)"
